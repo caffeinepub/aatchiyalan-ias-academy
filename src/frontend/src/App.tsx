@@ -50,6 +50,13 @@ const HEADING_GRADIENT: React.CSSProperties = {
   backgroundClip: "text",
 };
 
+const CONTACT_GRADIENT: React.CSSProperties = {
+  background: "linear-gradient(90deg, #1565C0 0%, #e53935 100%)",
+  WebkitBackgroundClip: "text",
+  WebkitTextFillColor: "transparent",
+  backgroundClip: "text",
+};
+
 // ── UTILITY BAR ──────────────────────────────────────────────────────────────
 function UtilityBar() {
   return (
@@ -175,7 +182,7 @@ function Navigation() {
             <Button
               type="button"
               onClick={scrollToCounseling}
-              className="ml-2 bg-gold hover:bg-gold-dark text-navy font-semibold text-sm px-4 py-2 h-9"
+              className="ml-2 bg-gold hover:bg-gold-dark text-white font-semibold text-sm px-4 py-2 h-9"
               data-ocid="nav.primary_button"
             >
               Enroll Now
@@ -227,7 +234,7 @@ function Navigation() {
                 <Button
                   type="button"
                   onClick={scrollToCounseling}
-                  className="w-full bg-gold hover:bg-gold-dark text-navy font-semibold"
+                  className="w-full bg-gold hover:bg-gold-dark text-white font-semibold"
                   data-ocid="nav.primary_button"
                 >
                   Enroll Now
@@ -283,7 +290,10 @@ function HeroSection() {
         >
           <div className="inline-flex items-center gap-2 bg-white/10 border border-gold/30 rounded-full px-4 py-1.5 mb-6">
             <Star className="w-3.5 h-3.5 text-gold" />
-            <span className="text-white/80 text-xs font-medium tracking-wider uppercase">
+            <span
+              className="text-xs font-medium tracking-wider uppercase"
+              style={HEADING_GRADIENT}
+            >
               Tamil Nadu&apos;s Premier IAS Coaching
             </span>
           </div>
@@ -309,7 +319,7 @@ function HeroSection() {
               type="button"
               size="lg"
               onClick={scrollToCounseling}
-              className="bg-gold hover:bg-gold-dark text-navy font-bold text-base px-8 py-3 h-auto shadow-lg hover:shadow-xl transition-all"
+              className="bg-gold hover:bg-gold-dark text-white font-bold text-base px-8 py-3 h-auto shadow-lg hover:shadow-xl transition-all"
               data-ocid="hero.primary_button"
             >
               Enroll Now
@@ -926,11 +936,20 @@ function Footer() {
             />
           </div>
           <div className="mb-3">
-            <div className="text-white font-bold text-sm">{DIRECTOR}</div>
-            <div className="text-gold text-xs font-semibold">Director</div>
-            <div className="text-white/50 text-xs">{DIRECTOR_QUALS}</div>
+            <div className="font-bold text-sm" style={HEADING_GRADIENT}>
+              {DIRECTOR}
+            </div>
+            <div className="text-xs font-semibold" style={HEADING_GRADIENT}>
+              Director
+            </div>
+            <div className="text-xs font-medium" style={HEADING_GRADIENT}>
+              {DIRECTOR_QUALS}
+            </div>
           </div>
-          <p className="text-sm leading-relaxed text-white/60 mb-5">
+          <p
+            className="text-sm leading-relaxed font-medium mb-5"
+            style={HEADING_GRADIENT}
+          >
             Tamil Nadu&apos;s premier coaching institution for TNPSC and
             government exams. Dedicated to transforming aspirants into
             government officers.
@@ -968,22 +987,25 @@ function Footer() {
 
         {/* Column 2: Contact Info */}
         <div>
-          <h4 className="text-white font-bold text-base mb-5 uppercase tracking-wider">
+          <h4
+            className="font-bold text-base mb-5 uppercase tracking-wider"
+            style={HEADING_GRADIENT}
+          >
             Contact Us
           </h4>
           <ul className="space-y-3 text-sm">
             <li className="flex items-start gap-3">
               <MapPin className="w-4 h-4 text-gold mt-0.5 shrink-0" />
-              <span className="text-white/70">
-                No. 45, Anna Salai, Teynampet, Chennai &ndash; 600 018, Tamil
-                Nadu
+              <span style={CONTACT_GRADIENT} className="font-semibold">
+                New Market Street, Near Bus Stand, Ariyalur - 621704
               </span>
             </li>
             <li className="flex items-center gap-3">
               <Phone className="w-4 h-4 text-gold shrink-0" />
               <a
                 href="tel:+919894993796"
-                className="text-white/70 hover:text-gold transition-colors"
+                style={CONTACT_GRADIENT}
+                className="font-semibold hover:opacity-80 transition-opacity"
               >
                 +91 98949 93796
               </a>
@@ -991,10 +1013,11 @@ function Footer() {
             <li className="flex items-center gap-3">
               <Mail className="w-4 h-4 text-gold shrink-0" />
               <a
-                href="mailto:info@aatchiyalan.com"
-                className="text-white/70 hover:text-gold transition-colors"
+                href="mailto:aatchiyalaniasacademy3.0@gmail.com"
+                style={CONTACT_GRADIENT}
+                className="font-semibold hover:opacity-80 transition-opacity"
               >
-                info@aatchiyalan.com
+                aatchiyalaniasacademy3.0@gmail.com
               </a>
             </li>
           </ul>
@@ -1002,7 +1025,10 @@ function Footer() {
 
         {/* Column 3: Quick Links */}
         <div>
-          <h4 className="text-white font-bold text-base mb-5 uppercase tracking-wider">
+          <h4
+            className="font-bold text-base mb-5 uppercase tracking-wider"
+            style={HEADING_GRADIENT}
+          >
             Quick Links
           </h4>
           <ul className="space-y-2">
@@ -1017,7 +1043,8 @@ function Footer() {
               <li key={link.href}>
                 <a
                   href={link.href}
-                  className="text-sm text-white/60 hover:text-gold transition-colors flex items-center gap-1.5"
+                  className="text-sm font-medium transition-colors flex items-center gap-1.5"
+                  style={HEADING_GRADIENT}
                   data-ocid="footer.link"
                 >
                   <ChevronRight className="w-3 h-3" />
@@ -1033,7 +1060,9 @@ function Footer() {
       <div className="border-t border-white/10 py-5">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-white/40">
           <span>
-            &copy; {year} Aatchiyalan IAS Academy. All Rights Reserved.
+            <span style={HEADING_GRADIENT}>
+              &copy; {year} Aatchiyalan IAS Academy. All Rights Reserved.
+            </span>
           </span>
           <div className="flex gap-4">
             <span className="hover:text-white/70 cursor-pointer transition-colors">
