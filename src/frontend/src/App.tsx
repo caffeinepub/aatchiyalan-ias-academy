@@ -44,8 +44,7 @@ import LoginPage from "./components/LoginPage";
 import StudentDashboard from "./components/StudentDashboard";
 import { useSubmitCounselingRequest } from "./hooks/useQueries";
 
-const LOGO =
-  "/assets/uploads/picsart_26-03-28_15-51-14-131-019d33f8-4bce-7532-85c1-75a35238e473-1.png";
+const LOGO = "/assets/capture_thish-019d47e7-cd2c-760d-a0bb-042016f55730.jpg";
 const DIRECTOR = "K. Karthik";
 const DIRECTOR_QUALS = "MBA., M.A(Phil)., M.Phil";
 const BRIGHT_BLUE = "oklch(0.55 0.22 258)";
@@ -169,11 +168,13 @@ function Navigation({
           className="flex items-center gap-3 group"
           data-ocid="nav.link"
         >
-          <img
-            src={LOGO}
-            alt="Aatchiyalan IAS Academy Logo"
-            className="h-16 w-auto object-contain"
-          />
+          <div className="h-16 w-16 rounded-full overflow-hidden border-2 border-white shadow-lg flex-shrink-0 bg-white">
+            <img
+              src={LOGO}
+              alt="Aatchiyalan IAS Academy Logo"
+              className="h-full w-full object-cover"
+            />
+          </div>
           <div className="hidden sm:flex flex-col">
             <span className="text-white font-bold text-sm leading-tight">
               Aatchiyalan IAS Academy
@@ -1095,11 +1096,13 @@ function Footer() {
       <div className="max-w-7xl mx-auto px-4 py-14 grid grid-cols-1 md:grid-cols-3 gap-10">
         <div>
           <div className="flex items-center gap-3 mb-3">
-            <img
-              src={LOGO}
-              alt="Aatchiyalan IAS Academy Logo"
-              className="h-14 w-auto object-contain"
-            />
+            <div className="h-14 w-14 rounded-full overflow-hidden border-2 border-white shadow-lg flex-shrink-0 bg-white">
+              <img
+                src={LOGO}
+                alt="Aatchiyalan IAS Academy Logo"
+                className="h-full w-full object-cover"
+              />
+            </div>
           </div>
           <div className="mb-3">
             <div className="font-bold text-sm" style={HEADING_GRADIENT}>

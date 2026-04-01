@@ -8,6 +8,7 @@ import Text "mo:core/Text";
 import Nat "mo:core/Nat";
 import Principal "mo:core/Principal";
 import MixinAuthorization "authorization/MixinAuthorization";
+import Prim "mo:prim";
 import MixinStorage "blob-storage/Mixin";
 import AccessControl "authorization/access-control";
 import Storage "blob-storage/Storage";
@@ -17,6 +18,29 @@ actor {
   let accessControlState = AccessControl.initState();
   include MixinAuthorization(accessControlState);
   include MixinStorage();
+
+  // Stable admin principal - persists across canister upgrades
+  stable var stableAdminPrincipal : ?Principal = null;
+
+  func isAdminCaller(caller : Principal) : Bool {
+    switch (stableAdminPrincipal) {
+      case (?p) { caller == p };
+      case (null) { isAdminCaller(caller) };
+    };
+  };
+
+  // Called from frontend after actor creation to register admin using secret token
+  public shared ({ caller }) func _registerStableAdmin(userSecret : Text) : async Bool {
+    switch (Prim.envVar<system>("CAFFEINE_ADMIN_TOKEN")) {
+      case (null) { false };
+      case (?adminToken) {
+        if (userSecret == adminToken and userSecret != "") {
+          stableAdminPrincipal := ?caller;
+          true
+        } else { false }
+      };
+    };
+  };
 
   // User Profile Type
   public type UserProfile = {
@@ -34,7 +58,7 @@ actor {
   };
 
   public query ({ caller }) func getUserProfile(user : Principal) : async ?UserProfile {
-    if (caller != user and not AccessControl.isAdmin(accessControlState, caller)) {
+    if (caller != user and not isAdminCaller(caller)) {
       Runtime.trap("Unauthorized: Can only view your own profile");
     };
     userProfiles.get(user);
@@ -270,14 +294,14 @@ actor {
 
   // Admin-only functionalities
   public query ({ caller }) func getAllCounselingRequests() : async [CounselingRequest] {
-    if (not (AccessControl.isAdmin(accessControlState, caller))) {
+    if (not (isAdminCaller(caller))) {
       Runtime.trap("Unauthorized: Only admins can view counseling requests");
     };
     counselingRequests.values().toArray().sort(func(a, b) { Nat.compare(a.id, b.id) });
   };
 
   public query ({ caller }) func getAllContactMessages() : async [ContactMessage] {
-    if (not (AccessControl.isAdmin(accessControlState, caller))) {
+    if (not (isAdminCaller(caller))) {
       Runtime.trap("Unauthorized: Only admins can view contact messages");
     };
     contactMessages.values().toArray().sort(func(a, b) { Nat.compare(a.id, b.id) });
@@ -285,7 +309,7 @@ actor {
 
   // Student Account Management (Admin)
   public shared ({ caller }) func createStudent(username : Text, password : Text, courseType : Text, duration : Text) : async Nat {
-    if (not (AccessControl.isAdmin(accessControlState, caller))) {
+    if (not (isAdminCaller(caller))) {
       Runtime.trap("Unauthorized: Only admins can create student accounts");
     };
     let newStudent : StudentAccount = {
@@ -303,7 +327,7 @@ actor {
   };
 
   public shared ({ caller }) func updateStudent(id : Nat, courseType : Text, duration : Text, isActive : Bool) : async () {
-    if (not (AccessControl.isAdmin(accessControlState, caller))) {
+    if (not (isAdminCaller(caller))) {
       Runtime.trap("Unauthorized: Only admins can update student accounts");
     };
     switch (students.get(id)) {
@@ -322,7 +346,7 @@ actor {
   };
 
   public query ({ caller }) func getStudentByUsername(username : Text) : async ?StudentAccount {
-    if (not (AccessControl.isAdmin(accessControlState, caller))) {
+    if (not (isAdminCaller(caller))) {
       Runtime.trap("Unauthorized: Only admins can view student details");
     };
     var student : ?StudentAccount = null;
@@ -331,7 +355,7 @@ actor {
   };
 
   public query ({ caller }) func listAllStudents() : async [StudentAccount] {
-    if (not (AccessControl.isAdmin(accessControlState, caller))) {
+    if (not (isAdminCaller(caller))) {
       Runtime.trap("Unauthorized: Only admins can list all students");
     };
     students.values().toArray().sort(func(a, b) { Nat.compare(a.id, b.id) });
@@ -344,7 +368,7 @@ actor {
 
   // Subject Management (Admin)
   public shared ({ caller }) func createSubject(courseType : Text, subjectName : Text) : async Nat {
-    if (not (AccessControl.isAdmin(accessControlState, caller))) {
+    if (not (isAdminCaller(caller))) {
       Runtime.trap("Unauthorized: Only admins can create subjects");
     };
     let newSubject : Subject = {
@@ -359,7 +383,7 @@ actor {
   };
 
   public shared ({ caller }) func deleteSubject(id : Nat) : async () {
-    if (not (AccessControl.isAdmin(accessControlState, caller))) {
+    if (not (isAdminCaller(caller))) {
       Runtime.trap("Unauthorized: Only admins can delete subjects");
     };
     subjects.remove(id);
@@ -371,7 +395,7 @@ actor {
 
   // Material Management (Admin)
   public shared ({ caller }) func createMaterial(subjectId : Nat, title : Text, description : Text, blob : Storage.ExternalBlob, isPaid : Bool) : async Nat {
-    if (not (AccessControl.isAdmin(accessControlState, caller))) {
+    if (not (isAdminCaller(caller))) {
       Runtime.trap("Unauthorized: Only admins can create materials");
     };
     let newMaterial : Material = {
@@ -389,7 +413,7 @@ actor {
   };
 
   public shared ({ caller }) func deleteMaterial(id : Nat) : async () {
-    if (not (AccessControl.isAdmin(accessControlState, caller))) {
+    if (not (isAdminCaller(caller))) {
       Runtime.trap("Unauthorized: Only admins can delete materials");
     };
     materials.remove(id);
@@ -449,7 +473,7 @@ actor {
 
   // Video Management (Admin)
   public shared ({ caller }) func createVideo(subjectId : Nat, title : Text, videoUrl : Text, freeCourseTypes : [Text]) : async Nat {
-    if (not (AccessControl.isAdmin(accessControlState, caller))) {
+    if (not (isAdminCaller(caller))) {
       Runtime.trap("Unauthorized: Only admins can create videos");
     };
     let newVideo : Video = {
@@ -466,7 +490,7 @@ actor {
   };
 
   public shared ({ caller }) func updateVideoFreeBatches(videoId : Nat, freeCourseTypes : [Text]) : async () {
-    if (not (AccessControl.isAdmin(accessControlState, caller))) {
+    if (not (isAdminCaller(caller))) {
       Runtime.trap("Unauthorized: Only admins can update videos");
     };
     switch (videos.get(videoId)) {
@@ -484,7 +508,7 @@ actor {
   };
 
   public shared ({ caller }) func deleteVideo(id : Nat) : async () {
-    if (not (AccessControl.isAdmin(accessControlState, caller))) {
+    if (not (isAdminCaller(caller))) {
       Runtime.trap("Unauthorized: Only admins can delete videos");
     };
     videos.remove(id);
@@ -540,7 +564,7 @@ actor {
 
   // Quiz Management (Admin)
   public shared ({ caller }) func createQuiz(title : Text, courseType : Text, questions : [QuizQuestion]) : async Nat {
-    if (not (AccessControl.isAdmin(accessControlState, caller))) {
+    if (not (isAdminCaller(caller))) {
       Runtime.trap("Unauthorized: Only admins can create quizzes");
     };
     let newQuiz : Quiz = {
@@ -556,7 +580,7 @@ actor {
   };
 
   public shared ({ caller }) func deleteQuiz(id : Nat) : async () {
-    if (not (AccessControl.isAdmin(accessControlState, caller))) {
+    if (not (isAdminCaller(caller))) {
       Runtime.trap("Unauthorized: Only admins can delete quizzes");
     };
     quizzes.remove(id);
@@ -687,7 +711,7 @@ actor {
   };
 
   public shared ({ caller }) func approvePayment(id : Nat) : async () {
-    if (not (AccessControl.isAdmin(accessControlState, caller))) {
+    if (not (isAdminCaller(caller))) {
       Runtime.trap("Unauthorized: Only admins can approve payments");
     };
     switch (payments.get(id)) {
@@ -701,7 +725,7 @@ actor {
   };
 
   public shared ({ caller }) func rejectPayment(id : Nat) : async () {
-    if (not (AccessControl.isAdmin(accessControlState, caller))) {
+    if (not (isAdminCaller(caller))) {
       Runtime.trap("Unauthorized: Only admins can reject payments");
     };
     switch (payments.get(id)) {
@@ -715,7 +739,7 @@ actor {
   };
 
   public query ({ caller }) func listAllPayments() : async [PaymentRequest] {
-    if (not (AccessControl.isAdmin(accessControlState, caller))) {
+    if (not (isAdminCaller(caller))) {
       Runtime.trap("Unauthorized: Only admins can view payments");
     };
     payments.values().toArray().sort(func(a, b) { Nat.compare(a.id, b.id) });

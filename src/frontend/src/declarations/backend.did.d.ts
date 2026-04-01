@@ -119,6 +119,7 @@ export interface _SERVICE {
     _CaffeineStorageRefillResult
   >,
   '_caffeineStorageUpdateGatewayPrincipals' : ActorMethod<[], undefined>,
+  '_registerStableAdmin' : ActorMethod<[string], boolean>,
   '_initializeAccessControlWithSecret' : ActorMethod<[string], undefined>,
   'approvePayment' : ActorMethod<[bigint], undefined>,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,

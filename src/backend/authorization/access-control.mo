@@ -21,16 +21,18 @@ module {
     };
   };
 
-  // First principal that calls this function becomes admin, all other principals become users.
+  // First principal that calls this function becomes admin (if token matches).
+  // Subsequent calls with the correct token can re-claim admin (handles canister upgrades).
   public func initialize(state : AccessControlState, caller : Principal, adminToken : Text, userProvidedToken : Text) {
     if (caller.isAnonymous()) { return };
-    switch (state.userRoles.get(caller)) {
-      case (?_) {};
-      case (null) {
-        if (not state.adminAssigned and userProvidedToken == adminToken) {
-          state.userRoles.add(caller, #admin);
-          state.adminAssigned := true;
-        } else {
+    if (userProvidedToken == adminToken and adminToken != "") {
+      // Always allow admin re-registration when token matches
+      state.userRoles.add(caller, #admin);
+      state.adminAssigned := true;
+    } else {
+      switch (state.userRoles.get(caller)) {
+        case (?_) {}; // already registered, keep existing role
+        case (null) {
           state.userRoles.add(caller, #user);
         };
       };
@@ -41,9 +43,7 @@ module {
     if (caller.isAnonymous()) { return #guest };
     switch (state.userRoles.get(caller)) {
       case (?role) { role };
-      case (null) {
-        Runtime.trap("User is not registered");
-      };
+      case (null) { #guest }; // Return guest instead of trapping
     };
   };
 
