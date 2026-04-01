@@ -12,18 +12,22 @@ import { Toaster } from "@/components/ui/sonner";
 import {
   Award,
   BookOpen,
+  Calculator,
   CheckCircle2,
   ChevronRight,
+  ClipboardList,
   Clock,
   ExternalLink,
   Facebook,
   FileText,
   Globe,
   GraduationCap,
+  LogIn,
   Mail,
   MapPin,
   Menu,
   Phone,
+  Shield,
   Star,
   Trophy,
   Twitter,
@@ -34,6 +38,10 @@ import {
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import type { StudentAccount } from "./backend.d";
+import AdminPanel from "./components/AdminPanel";
+import LoginPage from "./components/LoginPage";
+import StudentDashboard from "./components/StudentDashboard";
 import { useSubmitCounselingRequest } from "./hooks/useQueries";
 
 const LOGO =
@@ -42,6 +50,7 @@ const DIRECTOR = "K. Karthik";
 const DIRECTOR_QUALS = "MBA., M.A(Phil)., M.Phil";
 const BRIGHT_BLUE = "oklch(0.55 0.22 258)";
 const DARK_BLUE_BG = "#0a1628";
+const WHATSAPP_NUMBER = "918680815762";
 
 const HEADING_GRADIENT: React.CSSProperties = {
   background: "linear-gradient(90deg, #1565C0 0%, #e53935 100%)",
@@ -56,6 +65,8 @@ const CONTACT_GRADIENT: React.CSSProperties = {
   WebkitTextFillColor: "transparent",
   backgroundClip: "text",
 };
+
+type AppView = "home" | "login" | "dashboard" | "admin";
 
 // ── UTILITY BAR ──────────────────────────────────────────────────────────────
 function UtilityBar() {
@@ -116,7 +127,21 @@ const navLinks = [
   { label: "Contact", href: "#contact" },
 ];
 
-function Navigation() {
+function Navigation({
+  currentStudent,
+  isAdmin,
+  onLoginClick,
+  onDashboardClick,
+  onAdminClick,
+  onLogout,
+}: {
+  currentStudent: StudentAccount | null;
+  isAdmin: boolean;
+  onLoginClick: () => void;
+  onDashboardClick: () => void;
+  onAdminClick: () => void;
+  onLogout: () => void;
+}) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -135,13 +160,10 @@ function Navigation() {
 
   return (
     <nav
-      className={`sticky top-0 z-50 transition-all duration-300 ${
-        isScrolled ? "shadow-lg" : ""
-      }`}
+      className={`sticky top-0 z-50 transition-all duration-300 ${isScrolled ? "shadow-lg" : ""}`}
       style={{ background: DARK_BLUE_BG }}
     >
       <div className="max-w-7xl mx-auto px-4 py-2 flex items-center justify-between">
-        {/* Logo + Director */}
         <a
           href="#home"
           className="flex items-center gap-3 group"
@@ -165,7 +187,6 @@ function Navigation() {
           </div>
         </a>
 
-        {/* Desktop nav */}
         <ul className="hidden lg:flex items-center gap-1">
           {navLinks.map((link) => (
             <li key={link.href}>
@@ -179,18 +200,67 @@ function Navigation() {
             </li>
           ))}
           <li>
-            <Button
-              type="button"
-              onClick={scrollToCounseling}
-              className="ml-2 bg-gold hover:bg-gold-dark text-white font-semibold text-sm px-4 py-2 h-9"
-              data-ocid="nav.primary_button"
-            >
-              Enroll Now
-            </Button>
+            {currentStudent ? (
+              <div className="flex items-center gap-2 ml-2">
+                <Button
+                  type="button"
+                  onClick={onDashboardClick}
+                  className="bg-gold hover:bg-gold-dark text-white font-semibold text-sm px-4 py-2 h-9"
+                >
+                  My Portal
+                </Button>
+                <Button
+                  type="button"
+                  onClick={onLogout}
+                  variant="ghost"
+                  className="text-white/70 hover:text-white text-sm h-9"
+                >
+                  Logout
+                </Button>
+              </div>
+            ) : isAdmin ? (
+              <div className="flex items-center gap-2 ml-2">
+                <Button
+                  type="button"
+                  onClick={onAdminClick}
+                  className="bg-gold hover:bg-gold-dark text-white font-semibold text-sm px-4 py-2 h-9 flex items-center gap-1"
+                >
+                  <Shield className="w-3.5 h-3.5" />
+                  Admin Panel
+                </Button>
+                <Button
+                  type="button"
+                  onClick={onLogout}
+                  variant="ghost"
+                  className="text-white/70 hover:text-white text-sm h-9"
+                >
+                  Logout
+                </Button>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2 ml-2">
+                <Button
+                  type="button"
+                  onClick={onLoginClick}
+                  variant="ghost"
+                  className="text-white/80 hover:text-gold text-sm font-medium px-3 py-2 h-9 flex items-center gap-1"
+                >
+                  <LogIn className="w-3.5 h-3.5" />
+                  Student Login
+                </Button>
+                <Button
+                  type="button"
+                  onClick={scrollToCounseling}
+                  className="bg-gold hover:bg-gold-dark text-white font-semibold text-sm px-4 py-2 h-9"
+                  data-ocid="nav.primary_button"
+                >
+                  Enroll Now
+                </Button>
+              </div>
+            )}
           </li>
         </ul>
 
-        {/* Mobile hamburger */}
         <button
           type="button"
           className="lg:hidden text-white p-2"
@@ -206,7 +276,6 @@ function Navigation() {
         </button>
       </div>
 
-      {/* Mobile menu */}
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
@@ -230,15 +299,72 @@ function Navigation() {
                   </a>
                 </li>
               ))}
-              <li className="pt-2">
-                <Button
-                  type="button"
-                  onClick={scrollToCounseling}
-                  className="w-full bg-gold hover:bg-gold-dark text-white font-semibold"
-                  data-ocid="nav.primary_button"
-                >
-                  Enroll Now
-                </Button>
+              <li className="pt-2 flex flex-col gap-2">
+                {currentStudent ? (
+                  <>
+                    <Button
+                      type="button"
+                      onClick={() => {
+                        setMobileOpen(false);
+                        onDashboardClick();
+                      }}
+                      className="w-full bg-gold hover:bg-gold-dark text-white font-semibold"
+                    >
+                      My Portal
+                    </Button>
+                    <Button
+                      type="button"
+                      onClick={onLogout}
+                      variant="outline"
+                      className="w-full text-white border-white/30"
+                    >
+                      Logout
+                    </Button>
+                  </>
+                ) : isAdmin ? (
+                  <>
+                    <Button
+                      type="button"
+                      onClick={() => {
+                        setMobileOpen(false);
+                        onAdminClick();
+                      }}
+                      className="w-full bg-gold hover:bg-gold-dark text-white font-semibold"
+                    >
+                      Admin Panel
+                    </Button>
+                    <Button
+                      type="button"
+                      onClick={onLogout}
+                      variant="outline"
+                      className="w-full text-white border-white/30"
+                    >
+                      Logout
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button
+                      type="button"
+                      onClick={() => {
+                        setMobileOpen(false);
+                        onLoginClick();
+                      }}
+                      variant="outline"
+                      className="w-full text-white border-white/30"
+                    >
+                      Student Login
+                    </Button>
+                    <Button
+                      type="button"
+                      onClick={scrollToCounseling}
+                      className="w-full bg-gold hover:bg-gold-dark text-white font-semibold"
+                      data-ocid="nav.primary_button"
+                    >
+                      Enroll Now
+                    </Button>
+                  </>
+                )}
               </li>
             </ul>
           </motion.div>
@@ -249,13 +375,16 @@ function Navigation() {
 }
 
 // ── HERO ──────────────────────────────────────────────────────────────────────
-function HeroSection() {
+interface HeroSectionProps {
+  onLoginClick?: () => void;
+  onAdminClick?: () => void;
+}
+function HeroSection({ onLoginClick, onAdminClick }: HeroSectionProps) {
   const scrollToCounseling = () => {
     document
       .getElementById("counseling")
       ?.scrollIntoView({ behavior: "smooth" });
   };
-
   return (
     <section
       id="home"
@@ -265,7 +394,6 @@ function HeroSection() {
           "linear-gradient(135deg, oklch(0.18 0.07 252) 0%, oklch(0.22 0.07 252) 50%, oklch(0.26 0.06 240) 100%)",
       }}
     >
-      {/* Subtle geometric pattern overlay */}
       <div
         className="absolute inset-0 opacity-5"
         style={{
@@ -273,7 +401,6 @@ function HeroSection() {
             "repeating-linear-gradient(45deg, transparent, transparent 40px, oklch(0.72 0.12 78) 40px, oklch(0.72 0.12 78) 42px)",
         }}
       />
-      {/* Radial glow */}
       <div
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full opacity-10"
         style={{
@@ -281,7 +408,6 @@ function HeroSection() {
             "radial-gradient(circle, oklch(0.72 0.12 78), transparent 70%)",
         }}
       />
-
       <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -297,14 +423,12 @@ function HeroSection() {
               Tamil Nadu&apos;s Premier IAS Coaching
             </span>
           </div>
-
           <h1
             className="text-4xl md:text-6xl font-extrabold leading-tight mb-6"
             style={HEADING_GRADIENT}
           >
             Welcome to Aatchiyalan IAS Academy
           </h1>
-
           <p className="text-white/70 text-lg md:text-xl leading-relaxed mb-10 max-w-3xl mx-auto">
             Your Gateway to Government Services — Expert Coaching for{" "}
             <strong className="text-white/90">
@@ -313,7 +437,6 @@ function HeroSection() {
             &amp;{" "}
             <strong className="text-white/90">Madras High Court Exams</strong>
           </p>
-
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button
               type="button"
@@ -322,8 +445,7 @@ function HeroSection() {
               className="bg-gold hover:bg-gold-dark text-white font-bold text-base px-8 py-3 h-auto shadow-lg hover:shadow-xl transition-all"
               data-ocid="hero.primary_button"
             >
-              Enroll Now
-              <ChevronRight className="w-5 h-5 ml-1" />
+              Enroll Now <ChevronRight className="w-5 h-5 ml-1" />
             </Button>
             <Button
               type="button"
@@ -336,9 +458,36 @@ function HeroSection() {
               Free Counseling
             </Button>
           </div>
-
-          {/* Stats */}
-          <div className="mt-14 grid grid-cols-3 gap-6 max-w-lg mx-auto">
+          <div className="mt-6 flex flex-col items-center gap-3">
+            <div className="flex items-center gap-3">
+              <div className="h-px w-16 bg-white/20" />
+              <span className="text-white/50 text-xs uppercase tracking-widest font-medium">
+                Portal Access
+              </span>
+              <div className="h-px w-16 bg-white/20" />
+            </div>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Button
+                type="button"
+                onClick={onLoginClick}
+                className="flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/30 text-white font-semibold text-sm px-6 py-2.5 h-auto rounded-full backdrop-blur-sm transition-all hover:border-gold/60"
+                data-ocid="hero.student_login.button"
+              >
+                <GraduationCap className="w-4 h-4 text-gold" />
+                Student Login
+              </Button>
+              <Button
+                type="button"
+                onClick={onAdminClick}
+                className="flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/30 text-white font-semibold text-sm px-6 py-2.5 h-auto rounded-full backdrop-blur-sm transition-all hover:border-gold/60"
+                data-ocid="hero.admin_login.button"
+              >
+                <Shield className="w-4 h-4 text-gold" />
+                Admin Login
+              </Button>
+            </div>
+          </div>
+          <div className="mt-10 grid grid-cols-3 gap-6 max-w-lg mx-auto">
             {[
               { value: "500+", label: "Selections" },
               { value: "10+", label: "Years Experience" },
@@ -365,6 +514,8 @@ const batches = [
   { group: "Group 4", date: "April 15, 2026" },
   { group: "VAO", date: "April 20, 2026" },
   { group: "Madras High Court", date: "May 1, 2026" },
+  { group: "Test Batch", date: "Ongoing" },
+  { group: "Maths Class", date: "May 5, 2026" },
 ];
 
 function UpcomingBatches() {
@@ -373,7 +524,6 @@ function UpcomingBatches() {
       .getElementById("counseling")
       ?.scrollIntoView({ behavior: "smooth" });
   };
-
   return (
     <section
       id="coaching"
@@ -396,8 +546,6 @@ function UpcomingBatches() {
           </p>
           <div className="w-16 h-1 bg-gold mx-auto mt-4 rounded-full" />
         </motion.div>
-
-        {/* Batch timing banner */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -413,7 +561,6 @@ function UpcomingBatches() {
             <span className="text-gold">Afternoon 2:00 PM – 4:30 PM</span>
           </span>
         </motion.div>
-
         <div
           className="flex flex-wrap justify-center gap-4"
           data-ocid="batches.list"
@@ -457,28 +604,42 @@ const courses = [
     title: "TNPSC Group 1",
     subtitle: "Prelims + Mains + Interview",
     desc: "Comprehensive preparation for TNPSC Group 1 covering all subjects with expert faculty guidance and full study material.",
-    duration: "1 Year",
+    durations: "6 Month / 1 Year",
   },
   {
     icon: <BookOpen className="w-8 h-8" />,
     title: "TNPSC Group 2/2A",
     subtitle: "Interview & Non-Interview Posts",
     desc: "Structured coaching for Group 2 (Interview) and Group 2A (Non-Interview) posts with regular mock tests.",
-    duration: "1 Year",
+    durations: "6 Month / 1 Year",
   },
   {
     icon: <GraduationCap className="w-8 h-8" />,
     title: "TNPSC Group 4 & VAO",
     subtitle: "Village Administrative Officer",
     desc: "Specialized coaching for Group 4 and VAO exams with complete syllabus coverage in Tamil & English medium.",
-    duration: "1 Year",
+    durations: "6 Month / 1 Year",
   },
   {
     icon: <FileText className="w-8 h-8" />,
     title: "Madras High Court",
     subtitle: "Judicial Services Exam",
     desc: "Expert coaching for Madras High Court examinations covering all judicial service posts and support staff positions.",
-    duration: "1 Year",
+    durations: "3 Month / 6 Month",
+  },
+  {
+    icon: <ClipboardList className="w-8 h-8" />,
+    title: "Test Batch",
+    subtitle: "Online Quiz-Based Practice",
+    desc: "Practice with real exam-pattern MCQ quizzes. First 2 tests free. Pay Rs.50 per test from the 3rd onwards.",
+    durations: "Flexible",
+  },
+  {
+    icon: <Calculator className="w-8 h-8" />,
+    title: "Maths Class Batch",
+    subtitle: "Mathematics Coaching",
+    desc: "Specialized 1-month maths coaching with access to admin-assigned video lessons. No material downloads.",
+    durations: "1 Month",
   },
 ];
 
@@ -488,7 +649,6 @@ function CoursesSection() {
       .getElementById("counseling")
       ?.scrollIntoView({ behavior: "smooth" });
   };
-
   return (
     <section id="courses" className="py-16" style={{ background: BRIGHT_BLUE }}>
       <div className="max-w-7xl mx-auto px-4">
@@ -507,9 +667,8 @@ function CoursesSection() {
           </p>
           <div className="w-16 h-1 bg-gold mx-auto mt-4 rounded-full" />
         </motion.div>
-
         <div
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
           data-ocid="courses.list"
         >
           {courses.map((course, i) => (
@@ -536,14 +695,14 @@ function CoursesSection() {
               </p>
               <div className="flex items-center justify-between">
                 <span className="text-xs bg-navy/10 text-navy px-3 py-1 rounded-full font-medium">
-                  {course.duration}
+                  {course.durations}
                 </span>
                 <button
                   type="button"
                   onClick={scrollToCounseling}
                   className="text-gold text-sm font-semibold hover:underline flex items-center gap-1"
                 >
-                  View Details <ExternalLink className="w-3 h-3" />
+                  Enroll <ExternalLink className="w-3 h-3" />
                 </button>
               </div>
             </motion.div>
@@ -605,7 +764,6 @@ function WhyChooseUs() {
           <p className="text-white/70">What sets us apart from the rest</p>
           <div className="w-16 h-1 bg-gold mx-auto mt-4 rounded-full" />
         </motion.div>
-
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {features.map((feat, i) => (
             <motion.div
@@ -635,13 +793,12 @@ function WhyChooseUs() {
   );
 }
 
-// ── SUCCESS STORIES / ACHIEVERS ───────────────────────────────────────────────
+// ── SUCCESS STORIES ───────────────────────────────────────────────────────────
 const tnpscAchievers = [
   { name: "R. MuthamilSelvan", post: "Group IV", year: "2025" },
   { name: "Vishnu Priya", post: "Rural Development Department", year: "2023" },
   { name: "Mani", post: "TNUSRB", year: "2023" },
 ];
-
 const mhcAchievers = [
   { name: "Nithiya", post: "Senior Bailiff", year: "2025" },
   { name: "Malajothi", post: "Junior Bailiff", year: "2025" },
@@ -670,12 +827,10 @@ function SuccessStories() {
           </p>
           <div className="w-16 h-1 bg-gold mx-auto mt-4 rounded-full" />
         </motion.div>
-
         <div
           className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto"
           data-ocid="testimonials.list"
         >
-          {/* TNPSC Achievers */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -691,23 +846,21 @@ function SuccessStories() {
               </h3>
             </div>
             <div className="p-6 space-y-4">
-              {tnpscAchievers.map((achiever, i) => (
+              {tnpscAchievers.map((a, i) => (
                 <div
-                  key={achiever.name}
+                  key={a.name}
                   className="flex items-start gap-4 pb-4 border-b border-border last:border-0 last:pb-0"
                   data-ocid={`testimonials.item.${i + 1}`}
                 >
                   <div className="w-9 h-9 rounded-full bg-gold/20 border-2 border-gold flex items-center justify-center text-navy font-bold text-sm shrink-0">
-                    {achiever.name.charAt(0)}
+                    {a.name.charAt(0)}
                   </div>
                   <div>
-                    <div className="font-bold text-navy text-sm">
-                      {achiever.name}
-                    </div>
+                    <div className="font-bold text-navy text-sm">{a.name}</div>
                     <div className="text-muted-foreground text-xs mt-0.5">
-                      {achiever.post}{" "}
+                      {a.post}{" "}
                       <span className="text-gold font-semibold">
-                        · {achiever.year}
+                        · {a.year}
                       </span>
                     </div>
                   </div>
@@ -716,8 +869,6 @@ function SuccessStories() {
               ))}
             </div>
           </motion.div>
-
-          {/* MHC Achievers */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -733,23 +884,21 @@ function SuccessStories() {
               </h3>
             </div>
             <div className="p-6 space-y-4">
-              {mhcAchievers.map((achiever, i) => (
+              {mhcAchievers.map((a, i) => (
                 <div
-                  key={achiever.name}
+                  key={a.name}
                   className="flex items-start gap-4 pb-4 border-b border-border last:border-0 last:pb-0"
                   data-ocid={`testimonials.item.${i + 3}`}
                 >
                   <div className="w-9 h-9 rounded-full bg-gold/20 border-2 border-gold flex items-center justify-center text-navy font-bold text-sm shrink-0">
-                    {achiever.name.charAt(0)}
+                    {a.name.charAt(0)}
                   </div>
                   <div>
-                    <div className="font-bold text-navy text-sm">
-                      {achiever.name}
-                    </div>
+                    <div className="font-bold text-navy text-sm">{a.name}</div>
                     <div className="text-muted-foreground text-xs mt-0.5">
-                      {achiever.post}{" "}
+                      {a.post}{" "}
                       <span className="text-gold font-semibold">
-                        · {achiever.year}
+                        · {a.year}
                       </span>
                     </div>
                   </div>
@@ -772,6 +921,19 @@ function CounselingForm() {
   const [course, setCourse] = useState("");
   const { mutate, isPending } = useSubmitCounselingRequest();
 
+  const openWhatsApp = (data: {
+    name: string;
+    email: string;
+    phone: string;
+    course: string;
+  }) => {
+    const message = `New Counseling Request from Aatchiyalan IAS Academy website:\n\nName: ${data.name}\nPhone: ${data.phone}\nEmail: ${data.email}\nCourse Interested: ${data.course}`;
+    window.open(
+      `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`,
+      "_blank",
+    );
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!name || !email || !phone || !course) {
@@ -783,16 +945,15 @@ function CounselingForm() {
       {
         onSuccess: () => {
           toast.success(
-            "Your request has been submitted! We will contact you shortly.",
+            "Request submitted! Opening WhatsApp to notify us directly.",
           );
+          openWhatsApp({ name, email, phone, course });
           setName("");
           setEmail("");
           setPhone("");
           setCourse("");
         },
-        onError: () => {
-          toast.error("Something went wrong. Please try again.");
-        },
+        onError: () => toast.error("Something went wrong. Please try again."),
       },
     );
   };
@@ -819,7 +980,6 @@ function CounselingForm() {
               goals
             </p>
           </div>
-
           <form
             onSubmit={handleSubmit}
             className="bg-white rounded-2xl p-8 shadow-xl"
@@ -898,11 +1058,14 @@ function CounselingForm() {
                     <SelectItem value="Madras High Court">
                       Madras High Court
                     </SelectItem>
+                    <SelectItem value="Test Batch">Test Batch</SelectItem>
+                    <SelectItem value="Maths Class Batch">
+                      Maths Class Batch
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
             </div>
-
             <Button
               type="submit"
               disabled={isPending}
@@ -911,6 +1074,10 @@ function CounselingForm() {
             >
               {isPending ? "Submitting..." : "Request Free Counseling Session"}
             </Button>
+            <p className="text-center text-xs text-muted-foreground mt-3">
+              After submitting, WhatsApp will open with your details pre-filled
+              to notify us instantly.
+            </p>
           </form>
         </motion.div>
       </div>
@@ -926,7 +1093,6 @@ function Footer() {
   return (
     <footer id="contact" className="bg-navy-dark text-white/80">
       <div className="max-w-7xl mx-auto px-4 py-14 grid grid-cols-1 md:grid-cols-3 gap-10">
-        {/* Column 1: Brand */}
         <div>
           <div className="flex items-center gap-3 mb-3">
             <img
@@ -984,8 +1150,6 @@ function Footer() {
             </a>
           </div>
         </div>
-
-        {/* Column 2: Contact Info */}
         <div>
           <h4
             className="font-bold text-base mb-5 uppercase tracking-wider"
@@ -1022,8 +1186,6 @@ function Footer() {
             </li>
           </ul>
         </div>
-
-        {/* Column 3: Quick Links */}
         <div>
           <h4
             className="font-bold text-base mb-5 uppercase tracking-wider"
@@ -1055,8 +1217,6 @@ function Footer() {
           </ul>
         </div>
       </div>
-
-      {/* Bottom bar */}
       <div className="border-t border-white/10 py-5">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-white/40">
           <span>
@@ -1088,13 +1248,91 @@ function Footer() {
 
 // ── APP ────────────────────────────────────────────────────────────────────────
 export default function App() {
+  const [currentView, setCurrentView] = useState<AppView>("home");
+  const [currentStudent, setCurrentStudent] = useState<StudentAccount | null>(
+    null,
+  );
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("student_auth");
+    if (saved) {
+      try {
+        const data = JSON.parse(saved);
+        setCurrentStudent(data as StudentAccount);
+      } catch {}
+    }
+    const adminSaved = localStorage.getItem("admin_auth");
+    if (adminSaved === "true") setIsAdmin(true);
+  }, []);
+
+  const handleStudentSuccess = (student: StudentAccount) => {
+    setCurrentStudent(student);
+    setCurrentView("dashboard");
+  };
+
+  const handleAdminSuccess = () => {
+    setIsAdmin(true);
+    localStorage.setItem("admin_auth", "true");
+    setCurrentView("admin");
+  };
+
+  const handleLogout = () => {
+    setCurrentStudent(null);
+    setIsAdmin(false);
+    localStorage.removeItem("student_auth");
+    localStorage.removeItem("admin_auth");
+    setCurrentView("home");
+  };
+
+  if (currentView === "login") {
+    return (
+      <>
+        <Toaster richColors position="top-right" />
+        <LoginPage
+          onStudentSuccess={handleStudentSuccess}
+          onAdminSuccess={handleAdminSuccess}
+          onBack={() => setCurrentView("home")}
+        />
+      </>
+    );
+  }
+
+  if (currentView === "dashboard" && currentStudent) {
+    return (
+      <>
+        <Toaster richColors position="top-right" />
+        <StudentDashboard student={currentStudent} onLogout={handleLogout} />
+      </>
+    );
+  }
+
+  if (currentView === "admin") {
+    return (
+      <>
+        <Toaster richColors position="top-right" />
+        <AdminPanel onLogout={handleLogout} />
+      </>
+    );
+  }
+
   return (
     <div className="min-h-screen">
       <Toaster richColors position="top-right" />
       <UtilityBar />
-      <Navigation />
+      <Navigation
+        currentStudent={currentStudent}
+        isAdmin={isAdmin}
+        onLoginClick={() => setCurrentView("login")}
+        onDashboardClick={() => setCurrentView("dashboard")}
+        onAdminClick={() => setCurrentView("admin")}
+        onLogout={handleLogout}
+      />
       <main>
-        <HeroSection />
+        <HeroSection
+          onLoginClick={() => setCurrentView("login")}
+          onAdminClick={() => setCurrentView("admin")}
+        />
         <UpcomingBatches />
         <CoursesSection />
         <WhyChooseUs />

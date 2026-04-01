@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://aatchiyalan-ias-academy-1oj.caffeine.xyz/sitemap.xml

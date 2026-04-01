@@ -8,10 +8,30 @@
 
 import { IDL } from '@icp-sdk/core/candid';
 
+export const _CaffeineStorageCreateCertificateResult = IDL.Record({
+  'method' : IDL.Text,
+  'blob_hash' : IDL.Text,
+});
+export const _CaffeineStorageRefillInformation = IDL.Record({
+  'proposed_top_up_amount' : IDL.Opt(IDL.Nat),
+});
+export const _CaffeineStorageRefillResult = IDL.Record({
+  'success' : IDL.Opt(IDL.Bool),
+  'topped_up_amount' : IDL.Opt(IDL.Nat),
+});
 export const UserRole = IDL.Variant({
   'admin' : IDL.Null,
   'user' : IDL.Null,
   'guest' : IDL.Null,
+});
+export const ExternalBlob = IDL.Vec(IDL.Nat8);
+export const QuizQuestion = IDL.Record({
+  'correctOption' : IDL.Text,
+  'question' : IDL.Text,
+  'optionA' : IDL.Text,
+  'optionB' : IDL.Text,
+  'optionC' : IDL.Text,
+  'optionD' : IDL.Text,
 });
 export const ContactMessage = IDL.Record({
   'id' : IDL.Nat,
@@ -27,10 +47,128 @@ export const CounselingRequest = IDL.Record({
   'phone' : IDL.Text,
 });
 export const UserProfile = IDL.Record({ 'name' : IDL.Text });
+export const StudentAccount = IDL.Record({
+  'id' : IDL.Nat,
+  'duration' : IDL.Text,
+  'username' : IDL.Text,
+  'isActive' : IDL.Bool,
+  'passwordHash' : IDL.Text,
+  'courseType' : IDL.Text,
+});
+export const PaymentRequest = IDL.Record({
+  'id' : IDL.Nat,
+  'status' : IDL.Text,
+  'itemId' : IDL.Nat,
+  'username' : IDL.Text,
+  'upiRef' : IDL.Text,
+  'itemType' : IDL.Text,
+  'amount' : IDL.Nat,
+});
+export const MaterialPublic = IDL.Record({
+  'id' : IDL.Nat,
+  'title' : IDL.Text,
+  'description' : IDL.Text,
+  'isPaid' : IDL.Bool,
+  'subjectId' : IDL.Nat,
+});
+export const QuizQuestionPublic = IDL.Record({
+  'question' : IDL.Text,
+  'optionA' : IDL.Text,
+  'optionB' : IDL.Text,
+  'optionC' : IDL.Text,
+  'optionD' : IDL.Text,
+});
+export const QuizPublic = IDL.Record({
+  'id' : IDL.Nat,
+  'title' : IDL.Text,
+  'questions' : IDL.Vec(QuizQuestionPublic),
+  'courseType' : IDL.Text,
+});
+export const Subject = IDL.Record({
+  'id' : IDL.Nat,
+  'subjectName' : IDL.Text,
+  'courseType' : IDL.Text,
+});
+export const VideoPublic = IDL.Record({
+  'id' : IDL.Nat,
+  'title' : IDL.Text,
+  'freeCourseTypes' : IDL.Vec(IDL.Text),
+  'subjectId' : IDL.Nat,
+});
+export const QuizAttempt = IDL.Record({
+  'id' : IDL.Nat,
+  'username' : IDL.Text,
+  'score' : IDL.Nat,
+  'totalQuestions' : IDL.Nat,
+  'timestamp' : IDL.Int,
+  'quizId' : IDL.Nat,
+});
 
 export const idlService = IDL.Service({
+  '_caffeineStorageBlobIsLive' : IDL.Func(
+      [IDL.Vec(IDL.Nat8)],
+      [IDL.Bool],
+      ['query'],
+    ),
+  '_caffeineStorageBlobsToDelete' : IDL.Func(
+      [],
+      [IDL.Vec(IDL.Vec(IDL.Nat8))],
+      ['query'],
+    ),
+  '_caffeineStorageConfirmBlobDeletion' : IDL.Func(
+      [IDL.Vec(IDL.Vec(IDL.Nat8))],
+      [],
+      [],
+    ),
+  '_caffeineStorageCreateCertificate' : IDL.Func(
+      [IDL.Text],
+      [_CaffeineStorageCreateCertificateResult],
+      [],
+    ),
+  '_caffeineStorageRefillCashier' : IDL.Func(
+      [IDL.Opt(_CaffeineStorageRefillInformation)],
+      [_CaffeineStorageRefillResult],
+      [],
+    ),
+  '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
   '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
+  'approvePayment' : IDL.Func([IDL.Nat], [], []),
   'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
+  'checkPaymentApproved' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Nat],
+      [IDL.Bool],
+      ['query'],
+    ),
+  'createMaterial' : IDL.Func(
+      [IDL.Nat, IDL.Text, IDL.Text, ExternalBlob, IDL.Bool],
+      [IDL.Nat],
+      [],
+    ),
+  'createPaymentRequest' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Text, IDL.Nat, IDL.Nat, IDL.Text],
+      [IDL.Nat],
+      [],
+    ),
+  'createQuiz' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Vec(QuizQuestion)],
+      [IDL.Nat],
+      [],
+    ),
+  'createStudent' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Text, IDL.Text],
+      [IDL.Nat],
+      [],
+    ),
+  'createSubject' : IDL.Func([IDL.Text, IDL.Text], [IDL.Nat], []),
+  'createVideo' : IDL.Func(
+      [IDL.Nat, IDL.Text, IDL.Text, IDL.Vec(IDL.Text)],
+      [IDL.Nat],
+      [],
+    ),
+  'deleteMaterial' : IDL.Func([IDL.Nat], [], []),
+  'deleteQuiz' : IDL.Func([IDL.Nat], [], []),
+  'deleteSubject' : IDL.Func([IDL.Nat], [], []),
+  'deleteVideo' : IDL.Func([IDL.Nat], [], []),
   'getAllContactMessages' : IDL.Func([], [IDL.Vec(ContactMessage)], ['query']),
   'getAllCounselingRequests' : IDL.Func(
       [],
@@ -39,28 +177,83 @@ export const idlService = IDL.Service({
     ),
   'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
   'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
+  'getMaterialAccess' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Nat],
+      [IDL.Opt(ExternalBlob)],
+      ['query'],
+    ),
+  'getStudentByUsername' : IDL.Func(
+      [IDL.Text],
+      [IDL.Opt(StudentAccount)],
+      ['query'],
+    ),
+  'getStudentQuizAttemptCount' : IDL.Func(
+      [IDL.Text, IDL.Text],
+      [IDL.Nat],
+      ['query'],
+    ),
   'getUserProfile' : IDL.Func(
       [IDL.Principal],
       [IDL.Opt(UserProfile)],
       ['query'],
     ),
+  'getVideoAccess' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Nat],
+      [IDL.Opt(IDL.Text)],
+      ['query'],
+    ),
   'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+  'listAllPayments' : IDL.Func([], [IDL.Vec(PaymentRequest)], ['query']),
+  'listAllStudents' : IDL.Func([], [IDL.Vec(StudentAccount)], ['query']),
+  'listMaterials' : IDL.Func([IDL.Nat], [IDL.Vec(MaterialPublic)], ['query']),
+  'listQuizzes' : IDL.Func([IDL.Text], [IDL.Vec(QuizPublic)], ['query']),
+  'listSubjects' : IDL.Func([IDL.Text], [IDL.Vec(Subject)], ['query']),
+  'listVideos' : IDL.Func([IDL.Nat], [IDL.Vec(VideoPublic)], ['query']),
+  'rejectPayment' : IDL.Func([IDL.Nat], [], []),
   'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
+  'studentLogin' : IDL.Func([IDL.Text, IDL.Text], [IDL.Bool], ['query']),
   'submitContactMessage' : IDL.Func([IDL.Text, IDL.Text, IDL.Text], [], []),
   'submitCounselingRequest' : IDL.Func(
       [IDL.Text, IDL.Text, IDL.Text, IDL.Text],
       [],
       [],
     ),
+  'submitQuizAttempt' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Nat, IDL.Vec(IDL.Text)],
+      [IDL.Opt(QuizAttempt)],
+      [],
+    ),
+  'updateStudent' : IDL.Func([IDL.Nat, IDL.Text, IDL.Text, IDL.Bool], [], []),
+  'updateVideoFreeBatches' : IDL.Func([IDL.Nat, IDL.Vec(IDL.Text)], [], []),
 });
 
 export const idlInitArgs = [];
 
 export const idlFactory = ({ IDL }) => {
+  const _CaffeineStorageCreateCertificateResult = IDL.Record({
+    'method' : IDL.Text,
+    'blob_hash' : IDL.Text,
+  });
+  const _CaffeineStorageRefillInformation = IDL.Record({
+    'proposed_top_up_amount' : IDL.Opt(IDL.Nat),
+  });
+  const _CaffeineStorageRefillResult = IDL.Record({
+    'success' : IDL.Opt(IDL.Bool),
+    'topped_up_amount' : IDL.Opt(IDL.Nat),
+  });
   const UserRole = IDL.Variant({
     'admin' : IDL.Null,
     'user' : IDL.Null,
     'guest' : IDL.Null,
+  });
+  const ExternalBlob = IDL.Vec(IDL.Nat8);
+  const QuizQuestion = IDL.Record({
+    'correctOption' : IDL.Text,
+    'question' : IDL.Text,
+    'optionA' : IDL.Text,
+    'optionB' : IDL.Text,
+    'optionC' : IDL.Text,
+    'optionD' : IDL.Text,
   });
   const ContactMessage = IDL.Record({
     'id' : IDL.Nat,
@@ -76,10 +269,128 @@ export const idlFactory = ({ IDL }) => {
     'phone' : IDL.Text,
   });
   const UserProfile = IDL.Record({ 'name' : IDL.Text });
+  const StudentAccount = IDL.Record({
+    'id' : IDL.Nat,
+    'duration' : IDL.Text,
+    'username' : IDL.Text,
+    'isActive' : IDL.Bool,
+    'passwordHash' : IDL.Text,
+    'courseType' : IDL.Text,
+  });
+  const PaymentRequest = IDL.Record({
+    'id' : IDL.Nat,
+    'status' : IDL.Text,
+    'itemId' : IDL.Nat,
+    'username' : IDL.Text,
+    'upiRef' : IDL.Text,
+    'itemType' : IDL.Text,
+    'amount' : IDL.Nat,
+  });
+  const MaterialPublic = IDL.Record({
+    'id' : IDL.Nat,
+    'title' : IDL.Text,
+    'description' : IDL.Text,
+    'isPaid' : IDL.Bool,
+    'subjectId' : IDL.Nat,
+  });
+  const QuizQuestionPublic = IDL.Record({
+    'question' : IDL.Text,
+    'optionA' : IDL.Text,
+    'optionB' : IDL.Text,
+    'optionC' : IDL.Text,
+    'optionD' : IDL.Text,
+  });
+  const QuizPublic = IDL.Record({
+    'id' : IDL.Nat,
+    'title' : IDL.Text,
+    'questions' : IDL.Vec(QuizQuestionPublic),
+    'courseType' : IDL.Text,
+  });
+  const Subject = IDL.Record({
+    'id' : IDL.Nat,
+    'subjectName' : IDL.Text,
+    'courseType' : IDL.Text,
+  });
+  const VideoPublic = IDL.Record({
+    'id' : IDL.Nat,
+    'title' : IDL.Text,
+    'freeCourseTypes' : IDL.Vec(IDL.Text),
+    'subjectId' : IDL.Nat,
+  });
+  const QuizAttempt = IDL.Record({
+    'id' : IDL.Nat,
+    'username' : IDL.Text,
+    'score' : IDL.Nat,
+    'totalQuestions' : IDL.Nat,
+    'timestamp' : IDL.Int,
+    'quizId' : IDL.Nat,
+  });
   
   return IDL.Service({
+    '_caffeineStorageBlobIsLive' : IDL.Func(
+        [IDL.Vec(IDL.Nat8)],
+        [IDL.Bool],
+        ['query'],
+      ),
+    '_caffeineStorageBlobsToDelete' : IDL.Func(
+        [],
+        [IDL.Vec(IDL.Vec(IDL.Nat8))],
+        ['query'],
+      ),
+    '_caffeineStorageConfirmBlobDeletion' : IDL.Func(
+        [IDL.Vec(IDL.Vec(IDL.Nat8))],
+        [],
+        [],
+      ),
+    '_caffeineStorageCreateCertificate' : IDL.Func(
+        [IDL.Text],
+        [_CaffeineStorageCreateCertificateResult],
+        [],
+      ),
+    '_caffeineStorageRefillCashier' : IDL.Func(
+        [IDL.Opt(_CaffeineStorageRefillInformation)],
+        [_CaffeineStorageRefillResult],
+        [],
+      ),
+    '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
     '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
+    'approvePayment' : IDL.Func([IDL.Nat], [], []),
     'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
+    'checkPaymentApproved' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Nat],
+        [IDL.Bool],
+        ['query'],
+      ),
+    'createMaterial' : IDL.Func(
+        [IDL.Nat, IDL.Text, IDL.Text, ExternalBlob, IDL.Bool],
+        [IDL.Nat],
+        [],
+      ),
+    'createPaymentRequest' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Text, IDL.Nat, IDL.Nat, IDL.Text],
+        [IDL.Nat],
+        [],
+      ),
+    'createQuiz' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Vec(QuizQuestion)],
+        [IDL.Nat],
+        [],
+      ),
+    'createStudent' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Text, IDL.Text],
+        [IDL.Nat],
+        [],
+      ),
+    'createSubject' : IDL.Func([IDL.Text, IDL.Text], [IDL.Nat], []),
+    'createVideo' : IDL.Func(
+        [IDL.Nat, IDL.Text, IDL.Text, IDL.Vec(IDL.Text)],
+        [IDL.Nat],
+        [],
+      ),
+    'deleteMaterial' : IDL.Func([IDL.Nat], [], []),
+    'deleteQuiz' : IDL.Func([IDL.Nat], [], []),
+    'deleteSubject' : IDL.Func([IDL.Nat], [], []),
+    'deleteVideo' : IDL.Func([IDL.Nat], [], []),
     'getAllContactMessages' : IDL.Func(
         [],
         [IDL.Vec(ContactMessage)],
@@ -92,19 +403,54 @@ export const idlFactory = ({ IDL }) => {
       ),
     'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
     'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
+    'getMaterialAccess' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Nat],
+        [IDL.Opt(ExternalBlob)],
+        ['query'],
+      ),
+    'getStudentByUsername' : IDL.Func(
+        [IDL.Text],
+        [IDL.Opt(StudentAccount)],
+        ['query'],
+      ),
+    'getStudentQuizAttemptCount' : IDL.Func(
+        [IDL.Text, IDL.Text],
+        [IDL.Nat],
+        ['query'],
+      ),
     'getUserProfile' : IDL.Func(
         [IDL.Principal],
         [IDL.Opt(UserProfile)],
         ['query'],
       ),
+    'getVideoAccess' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Nat],
+        [IDL.Opt(IDL.Text)],
+        ['query'],
+      ),
     'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+    'listAllPayments' : IDL.Func([], [IDL.Vec(PaymentRequest)], ['query']),
+    'listAllStudents' : IDL.Func([], [IDL.Vec(StudentAccount)], ['query']),
+    'listMaterials' : IDL.Func([IDL.Nat], [IDL.Vec(MaterialPublic)], ['query']),
+    'listQuizzes' : IDL.Func([IDL.Text], [IDL.Vec(QuizPublic)], ['query']),
+    'listSubjects' : IDL.Func([IDL.Text], [IDL.Vec(Subject)], ['query']),
+    'listVideos' : IDL.Func([IDL.Nat], [IDL.Vec(VideoPublic)], ['query']),
+    'rejectPayment' : IDL.Func([IDL.Nat], [], []),
     'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
+    'studentLogin' : IDL.Func([IDL.Text, IDL.Text], [IDL.Bool], ['query']),
     'submitContactMessage' : IDL.Func([IDL.Text, IDL.Text, IDL.Text], [], []),
     'submitCounselingRequest' : IDL.Func(
         [IDL.Text, IDL.Text, IDL.Text, IDL.Text],
         [],
         [],
       ),
+    'submitQuizAttempt' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Nat, IDL.Vec(IDL.Text)],
+        [IDL.Opt(QuizAttempt)],
+        [],
+      ),
+    'updateStudent' : IDL.Func([IDL.Nat, IDL.Text, IDL.Text, IDL.Bool], [], []),
+    'updateVideoFreeBatches' : IDL.Func([IDL.Nat, IDL.Vec(IDL.Text)], [], []),
   });
 };
 

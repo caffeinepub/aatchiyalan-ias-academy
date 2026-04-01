@@ -23,25 +23,155 @@ export interface CounselingRequest {
   'courseInterest' : string,
   'phone' : string,
 }
+export type ExternalBlob = Uint8Array;
+export interface MaterialPublic {
+  'id' : bigint,
+  'title' : string,
+  'description' : string,
+  'isPaid' : boolean,
+  'subjectId' : bigint,
+}
+export interface PaymentRequest {
+  'id' : bigint,
+  'status' : string,
+  'itemId' : bigint,
+  'username' : string,
+  'upiRef' : string,
+  'itemType' : string,
+  'amount' : bigint,
+}
+export interface QuizAttempt {
+  'id' : bigint,
+  'username' : string,
+  'score' : bigint,
+  'totalQuestions' : bigint,
+  'timestamp' : bigint,
+  'quizId' : bigint,
+}
+export interface QuizPublic {
+  'id' : bigint,
+  'title' : string,
+  'questions' : Array<QuizQuestionPublic>,
+  'courseType' : string,
+}
+export interface QuizQuestion {
+  'correctOption' : string,
+  'question' : string,
+  'optionA' : string,
+  'optionB' : string,
+  'optionC' : string,
+  'optionD' : string,
+}
+export interface QuizQuestionPublic {
+  'question' : string,
+  'optionA' : string,
+  'optionB' : string,
+  'optionC' : string,
+  'optionD' : string,
+}
+export interface StudentAccount {
+  'id' : bigint,
+  'duration' : string,
+  'username' : string,
+  'isActive' : boolean,
+  'passwordHash' : string,
+  'courseType' : string,
+}
+export interface Subject {
+  'id' : bigint,
+  'subjectName' : string,
+  'courseType' : string,
+}
 export interface UserProfile { 'name' : string }
 export type UserRole = { 'admin' : null } |
   { 'user' : null } |
   { 'guest' : null };
+export interface VideoPublic {
+  'id' : bigint,
+  'title' : string,
+  'freeCourseTypes' : Array<string>,
+  'subjectId' : bigint,
+}
+export interface _CaffeineStorageCreateCertificateResult {
+  'method' : string,
+  'blob_hash' : string,
+}
+export interface _CaffeineStorageRefillInformation {
+  'proposed_top_up_amount' : [] | [bigint],
+}
+export interface _CaffeineStorageRefillResult {
+  'success' : [] | [boolean],
+  'topped_up_amount' : [] | [bigint],
+}
 export interface _SERVICE {
+  '_caffeineStorageBlobIsLive' : ActorMethod<[Uint8Array], boolean>,
+  '_caffeineStorageBlobsToDelete' : ActorMethod<[], Array<Uint8Array>>,
+  '_caffeineStorageConfirmBlobDeletion' : ActorMethod<
+    [Array<Uint8Array>],
+    undefined
+  >,
+  '_caffeineStorageCreateCertificate' : ActorMethod<
+    [string],
+    _CaffeineStorageCreateCertificateResult
+  >,
+  '_caffeineStorageRefillCashier' : ActorMethod<
+    [[] | [_CaffeineStorageRefillInformation]],
+    _CaffeineStorageRefillResult
+  >,
+  '_caffeineStorageUpdateGatewayPrincipals' : ActorMethod<[], undefined>,
   '_initializeAccessControlWithSecret' : ActorMethod<[string], undefined>,
+  'approvePayment' : ActorMethod<[bigint], undefined>,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
+  'checkPaymentApproved' : ActorMethod<[string, string, bigint], boolean>,
+  'createMaterial' : ActorMethod<
+    [bigint, string, string, ExternalBlob, boolean],
+    bigint
+  >,
+  'createPaymentRequest' : ActorMethod<
+    [string, string, string, bigint, bigint, string],
+    bigint
+  >,
+  'createQuiz' : ActorMethod<[string, string, Array<QuizQuestion>], bigint>,
+  'createStudent' : ActorMethod<[string, string, string, string], bigint>,
+  'createSubject' : ActorMethod<[string, string], bigint>,
+  'createVideo' : ActorMethod<[bigint, string, string, Array<string>], bigint>,
+  'deleteMaterial' : ActorMethod<[bigint], undefined>,
+  'deleteQuiz' : ActorMethod<[bigint], undefined>,
+  'deleteSubject' : ActorMethod<[bigint], undefined>,
+  'deleteVideo' : ActorMethod<[bigint], undefined>,
   'getAllContactMessages' : ActorMethod<[], Array<ContactMessage>>,
   'getAllCounselingRequests' : ActorMethod<[], Array<CounselingRequest>>,
   'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
   'getCallerUserRole' : ActorMethod<[], UserRole>,
+  'getMaterialAccess' : ActorMethod<
+    [string, string, bigint],
+    [] | [ExternalBlob]
+  >,
+  'getStudentByUsername' : ActorMethod<[string], [] | [StudentAccount]>,
+  'getStudentQuizAttemptCount' : ActorMethod<[string, string], bigint>,
   'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
+  'getVideoAccess' : ActorMethod<[string, string, bigint], [] | [string]>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
+  'listAllPayments' : ActorMethod<[], Array<PaymentRequest>>,
+  'listAllStudents' : ActorMethod<[], Array<StudentAccount>>,
+  'listMaterials' : ActorMethod<[bigint], Array<MaterialPublic>>,
+  'listQuizzes' : ActorMethod<[string], Array<QuizPublic>>,
+  'listSubjects' : ActorMethod<[string], Array<Subject>>,
+  'listVideos' : ActorMethod<[bigint], Array<VideoPublic>>,
+  'rejectPayment' : ActorMethod<[bigint], undefined>,
   'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
+  'studentLogin' : ActorMethod<[string, string], boolean>,
   'submitContactMessage' : ActorMethod<[string, string, string], undefined>,
   'submitCounselingRequest' : ActorMethod<
     [string, string, string, string],
     undefined
   >,
+  'submitQuizAttempt' : ActorMethod<
+    [string, string, bigint, Array<string>],
+    [] | [QuizAttempt]
+  >,
+  'updateStudent' : ActorMethod<[bigint, string, string, boolean], undefined>,
+  'updateVideoFreeBatches' : ActorMethod<[bigint, Array<string>], undefined>,
 }
 export declare const idlService: IDL.ServiceClass;
 export declare const idlInitArgs: IDL.Type[];
