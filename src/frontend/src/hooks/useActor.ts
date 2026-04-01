@@ -28,10 +28,6 @@ export function useActor() {
       const actor = await createActorWithConfig(actorOptions);
       const adminToken = getSecretParameter("caffeineAdminToken") || "";
       await actor._initializeAccessControlWithSecret(adminToken);
-      // Also register in stable storage so admin persists across canister upgrades
-      if (adminToken) {
-        await actor._registerStableAdmin(adminToken).catch(() => {});
-      }
       return actor;
     },
     // Only refetch when identity changes

@@ -7,7 +7,6 @@ import { useState } from "react";
 import { toast } from "sonner";
 import type { StudentAccount } from "../backend.d";
 import { useActor } from "../hooks/useActor";
-import { useInternetIdentity } from "../hooks/useInternetIdentity";
 
 const LOGO =
   "/assets/uploads/picsart_26-03-28_15-51-14-131-019d33f8-4bce-7532-85c1-75a35238e473-1.png";
@@ -32,8 +31,6 @@ export default function LoginPage({
 }: LoginPageProps) {
   const { actor: actorMaybe } = useActor();
   const actor = actorMaybe!;
-  const { login, identity } = useInternetIdentity();
-  const isAuthenticated = !!identity;
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -79,35 +76,26 @@ export default function LoginPage({
     }
   };
 
-  const handleAdminLogin = async () => {
+  const [adminUsername, setAdminUsername] = useState("");
+  const [adminPassword, setAdminPassword] = useState("");
+
+  const handleAdminPasswordLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!adminUsername || !adminPassword) {
+      toast.error("Enter admin username and password");
+      return;
+    }
     setLoading(true);
     try {
-      await login();
-      const isAdmin = await actor.isCallerAdmin();
-      if (isAdmin) {
+      const ok = await actor.adminPasswordLogin(adminUsername, adminPassword);
+      if (ok) {
         toast.success("Admin login successful!");
         onAdminSuccess();
       } else {
-        toast.error("You are not an admin.");
+        toast.error("Invalid admin username or password.");
       }
     } catch {
-      toast.error("Admin login failed.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleAdminAlreadyAuth = async () => {
-    setLoading(true);
-    try {
-      const isAdmin = await actor.isCallerAdmin();
-      if (isAdmin) {
-        onAdminSuccess();
-      } else {
-        toast.error("Not authorized as admin.");
-      }
-    } catch {
-      toast.error("Failed to verify admin.");
+      toast.error("Admin login failed. Try again.");
     } finally {
       setLoading(false);
     }
@@ -192,33 +180,36 @@ export default function LoginPage({
                 </form>
               </TabsContent>
               <TabsContent value="admin">
-                <div className="text-center space-y-4">
-                  <p className="text-muted-foreground text-sm">
-                    Admin login uses Internet Identity for secure
-                    authentication.
-                  </p>
-                  {isAuthenticated ? (
-                    <Button
-                      type="button"
-                      onClick={handleAdminAlreadyAuth}
-                      disabled={loading}
-                      className="w-full bg-blue-800 hover:bg-blue-900 text-white font-bold"
-                    >
-                      {loading ? "Verifying..." : "Enter Admin Panel"}
-                    </Button>
-                  ) : (
-                    <Button
-                      type="button"
-                      onClick={handleAdminLogin}
-                      disabled={loading}
-                      className="w-full bg-blue-800 hover:bg-blue-900 text-white font-bold"
-                    >
-                      {loading
-                        ? "Connecting..."
-                        : "Login with Internet Identity"}
-                    </Button>
-                  )}
-                </div>
+                <form onSubmit={handleAdminPasswordLogin} className="space-y-4">
+                  <div>
+                    <Label className="text-sm font-semibold mb-1.5 block">
+                      Admin Username
+                    </Label>
+                    <Input
+                      placeholder="Enter admin username"
+                      value={adminUsername}
+                      onChange={(e) => setAdminUsername(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-sm font-semibold mb-1.5 block">
+                      Admin Password
+                    </Label>
+                    <Input
+                      type="password"
+                      placeholder="Enter admin password"
+                      value={adminPassword}
+                      onChange={(e) => setAdminPassword(e.target.value)}
+                    />
+                  </div>
+                  <Button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full bg-blue-800 hover:bg-blue-900 text-white font-bold"
+                  >
+                    {loading ? "Logging in..." : "Admin Login"}
+                  </Button>
+                </form>
               </TabsContent>
             </Tabs>
           </div>

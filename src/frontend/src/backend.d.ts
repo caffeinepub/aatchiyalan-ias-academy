@@ -123,6 +123,8 @@ export interface backendInterface {
     getUserProfile(user: Principal): Promise<UserProfile | null>;
     getVideoAccess(username: string, password: string, videoId: bigint): Promise<string | null>;
     isCallerAdmin(): Promise<boolean>;
+    adminPasswordLogin(username: string, password: string): Promise<boolean>;
+    setAdminPassword(currentPassword: string, newUsername: string, newPassword: string): Promise<boolean>;
     _registerStableAdmin(userSecret: string): Promise<boolean>;
     listAllPayments(): Promise<Array<PaymentRequest>>;
     listAllStudents(): Promise<Array<StudentAccount>>;

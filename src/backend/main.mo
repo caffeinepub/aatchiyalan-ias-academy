@@ -22,11 +22,29 @@ actor {
   // Stable admin principal - persists across canister upgrades
   stable var stableAdminPrincipal : ?Principal = null;
 
+  // Admin credentials for password-based login
+  stable var adminUsername : Text = "admin";
+  stable var adminPasswordHash : Text = "admin123";
+
   func isAdminCaller(caller : Principal) : Bool {
     switch (stableAdminPrincipal) {
       case (?p) { caller == p };
-      case (null) { isAdminCaller(caller) };
+      case (null) { false };
     };
+  };
+
+  // Password-based admin login — returns true if credentials match
+  public query func adminPasswordLogin(username : Text, password : Text) : async Bool {
+    username == adminUsername and password == adminPasswordHash
+  };
+
+  // Change admin password (requires current password)
+  public shared func setAdminPassword(currentPassword : Text, newUsername : Text, newPassword : Text) : async Bool {
+    if (currentPassword == adminPasswordHash) {
+      adminUsername := newUsername;
+      adminPasswordHash := newPassword;
+      true
+    } else { false }
   };
 
   // Called from frontend after actor creation to register admin using secret token

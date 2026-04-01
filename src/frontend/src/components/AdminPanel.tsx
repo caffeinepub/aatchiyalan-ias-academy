@@ -25,6 +25,7 @@ import {
   ClipboardList,
   CreditCard,
   FileText,
+  KeyRound,
   LogOut,
   MessageSquare,
   Plus,
@@ -140,6 +141,15 @@ export default function AdminPanel({ onLogout }: AdminPanelProps) {
 
   // Counseling
   const [counseling, setCounseling] = useState<CounselingRequest[]>([]);
+
+  // Change Password
+  const [pwForm, setPwForm] = useState({
+    currentPassword: "",
+    newUsername: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
+  const [pwLoading, setPwLoading] = useState(false);
 
   useEffect(() => {
     loadStudents();
@@ -411,6 +421,41 @@ export default function AdminPanel({ onLogout }: AdminPanelProps) {
     }
   };
 
+  // --- Change Password ---
+  const handleChangePassword = async () => {
+    if (pwForm.newPassword !== pwForm.confirmPassword) {
+      toast.error("New passwords do not match");
+      return;
+    }
+    if (pwForm.newPassword.length < 6) {
+      toast.error("Password must be at least 6 characters");
+      return;
+    }
+    setPwLoading(true);
+    try {
+      const ok = await actor.setAdminPassword(
+        pwForm.currentPassword,
+        pwForm.newUsername,
+        pwForm.newPassword,
+      );
+      if (ok) {
+        toast.success("Password changed successfully");
+        setPwForm({
+          currentPassword: "",
+          newUsername: "",
+          newPassword: "",
+          confirmPassword: "",
+        });
+      } else {
+        toast.error("Current password is incorrect");
+      }
+    } catch {
+      toast.error("Failed to change password");
+    } finally {
+      setPwLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="sticky top-0 z-50" style={{ background: DARK_BLUE_BG }}>
@@ -460,6 +505,13 @@ export default function AdminPanel({ onLogout }: AdminPanelProps) {
             <TabsTrigger value="counseling" className="flex items-center gap-1">
               <MessageSquare className="w-4 h-4" />
               Counseling
+            </TabsTrigger>
+            <TabsTrigger
+              value="changepassword"
+              className="flex items-center gap-1"
+            >
+              <KeyRound className="w-4 h-4" />
+              Change Password
             </TabsTrigger>
           </TabsList>
 
@@ -1213,6 +1265,71 @@ export default function AdminPanel({ onLogout }: AdminPanelProps) {
                     )}
                   </TableBody>
                 </Table>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* CHANGE PASSWORD */}
+          <TabsContent value="changepassword">
+            <Card className="max-w-md mx-auto">
+              <CardHeader>
+                <CardTitle style={HEADING_GRADIENT}>
+                  Change Admin Password
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <Label>Current Password</Label>
+                  <Input
+                    type="password"
+                    value={pwForm.currentPassword}
+                    onChange={(e) =>
+                      setPwForm({ ...pwForm, currentPassword: e.target.value })
+                    }
+                    placeholder="Enter current password"
+                    data-ocid="changepassword.input"
+                  />
+                </div>
+                <div>
+                  <Label>New Username</Label>
+                  <Input
+                    value={pwForm.newUsername}
+                    onChange={(e) =>
+                      setPwForm({ ...pwForm, newUsername: e.target.value })
+                    }
+                    placeholder="Enter new username"
+                  />
+                </div>
+                <div>
+                  <Label>New Password</Label>
+                  <Input
+                    type="password"
+                    value={pwForm.newPassword}
+                    onChange={(e) =>
+                      setPwForm({ ...pwForm, newPassword: e.target.value })
+                    }
+                    placeholder="Enter new password"
+                  />
+                </div>
+                <div>
+                  <Label>Confirm New Password</Label>
+                  <Input
+                    type="password"
+                    value={pwForm.confirmPassword}
+                    onChange={(e) =>
+                      setPwForm({ ...pwForm, confirmPassword: e.target.value })
+                    }
+                    placeholder="Confirm new password"
+                  />
+                </div>
+                <Button
+                  onClick={handleChangePassword}
+                  disabled={pwLoading}
+                  className="w-full bg-blue-800 hover:bg-blue-900 text-white"
+                  data-ocid="changepassword.submit_button"
+                >
+                  {pwLoading ? "Changing..." : "Change Password"}
+                </Button>
               </CardContent>
             </Card>
           </TabsContent>

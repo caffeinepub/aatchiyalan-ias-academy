@@ -217,6 +217,8 @@ export interface backendInterface {
     getUserProfile(user: Principal): Promise<UserProfile | null>;
     getVideoAccess(username: string, password: string, videoId: bigint): Promise<string | null>;
     isCallerAdmin(): Promise<boolean>;
+    adminPasswordLogin(username: string, password: string): Promise<boolean>;
+    setAdminPassword(currentPassword: string, newUsername: string, newPassword: string): Promise<boolean>;
     listAllPayments(): Promise<Array<PaymentRequest>>;
     listAllStudents(): Promise<Array<StudentAccount>>;
     listMaterials(subjectId: bigint): Promise<Array<MaterialPublic>>;
@@ -666,6 +668,34 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.isCallerAdmin();
+            return result;
+        }
+    }
+    async adminPasswordLogin(username: string, password: string): Promise<boolean> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.adminPasswordLogin(username, password);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.adminPasswordLogin(username, password);
+            return result;
+        }
+    }
+    async setAdminPassword(currentPassword: string, newUsername: string, newPassword: string): Promise<boolean> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.setAdminPassword(currentPassword, newUsername, newPassword);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.setAdminPassword(currentPassword, newUsername, newPassword);
             return result;
         }
     }
