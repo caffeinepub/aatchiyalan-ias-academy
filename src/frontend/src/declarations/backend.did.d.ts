@@ -171,6 +171,10 @@ export interface _SERVICE {
     [string, string, bigint, Array<string>],
     [] | [QuizAttempt]
   >,
+  'adminPasswordLogin' : ActorMethod<[string, string], boolean>,
+  'setAdminPassword' : ActorMethod<[string, string, string], boolean>,
+  'setAdminPrincipalByPassword' : ActorMethod<[string, string], boolean>,
+  'getStudentProfileForLogin' : ActorMethod<[string, string], [] | [StudentAccount]>,
   'updateStudent' : ActorMethod<[bigint, string, string, boolean], undefined>,
   'updateVideoFreeBatches' : ActorMethod<[bigint, Array<string>], undefined>,
 }

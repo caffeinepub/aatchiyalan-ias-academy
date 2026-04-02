@@ -219,6 +219,8 @@ export interface backendInterface {
     isCallerAdmin(): Promise<boolean>;
     adminPasswordLogin(username: string, password: string): Promise<boolean>;
     setAdminPassword(currentPassword: string, newUsername: string, newPassword: string): Promise<boolean>;
+    setAdminPrincipalByPassword(username: string, password: string): Promise<boolean>;
+    getStudentProfileForLogin(username: string, password: string): Promise<StudentAccount | null>;
     listAllPayments(): Promise<Array<PaymentRequest>>;
     listAllStudents(): Promise<Array<StudentAccount>>;
     listMaterials(subjectId: bigint): Promise<Array<MaterialPublic>>;
@@ -697,6 +699,34 @@ export class Backend implements backendInterface {
         } else {
             const result = await this.actor.setAdminPassword(currentPassword, newUsername, newPassword);
             return result;
+        }
+    }
+    async setAdminPrincipalByPassword(username: string, password: string): Promise<boolean> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.setAdminPrincipalByPassword(username, password);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.setAdminPrincipalByPassword(username, password);
+            return result;
+        }
+    }
+    async getStudentProfileForLogin(username: string, password: string): Promise<StudentAccount | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getStudentProfileForLogin(username, password);
+                return result.length > 0 ? result[0] : null;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getStudentProfileForLogin(username, password);
+            return result.length > 0 ? result[0] : null;
         }
     }
     async listAllPayments(): Promise<Array<PaymentRequest>> {

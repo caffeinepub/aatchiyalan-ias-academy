@@ -47,6 +47,14 @@ actor {
     } else { false }
   };
 
+  // Register caller's principal as admin after password validation (for Ed25519 identity login)
+  public shared ({ caller }) func setAdminPrincipalByPassword(username : Text, password : Text) : async Bool {
+    if (username == adminUsername and password == adminPasswordHash) {
+      stableAdminPrincipal := ?caller;
+      true
+    } else { false }
+  };
+
   // Called from frontend after actor creation to register admin using secret token
   public shared ({ caller }) func _registerStableAdmin(userSecret : Text) : async Bool {
     switch (Prim.envVar<system>("CAFFEINE_ADMIN_TOKEN")) {
@@ -370,6 +378,12 @@ actor {
     var student : ?StudentAccount = null;
     students.values().forEach(func(s) { if (s.username == username) { student := ?s } });
     student;
+  };
+
+  // For student login: returns student profile if credentials match (no admin required)
+  public query func getStudentProfileForLogin(username : Text, password : Text) : async ?StudentAccount {
+    if (not studentLoginInternal(username, password)) { return null; };
+    getStudentByUsernameInternal(username);
   };
 
   public query ({ caller }) func listAllStudents() : async [StudentAccount] {

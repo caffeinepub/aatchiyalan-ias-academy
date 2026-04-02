@@ -224,6 +224,10 @@ export const idlService = IDL.Service({
       [IDL.Opt(QuizAttempt)],
       [],
     ),
+  'adminPasswordLogin' : IDL.Func([IDL.Text, IDL.Text], [IDL.Bool], ['query']),
+  'setAdminPassword' : IDL.Func([IDL.Text, IDL.Text, IDL.Text], [IDL.Bool], []),
+  'setAdminPrincipalByPassword' : IDL.Func([IDL.Text, IDL.Text], [IDL.Bool], []),
+  'getStudentProfileForLogin' : IDL.Func([IDL.Text, IDL.Text], [IDL.Opt(StudentAccount)], ['query']),
   'updateStudent' : IDL.Func([IDL.Nat, IDL.Text, IDL.Text, IDL.Bool], [], []),
   'updateVideoFreeBatches' : IDL.Func([IDL.Nat, IDL.Vec(IDL.Text)], [], []),
 });
@@ -451,6 +455,10 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Opt(QuizAttempt)],
         [],
       ),
+    'adminPasswordLogin' : IDL.Func([IDL.Text, IDL.Text], [IDL.Bool], ['query']),
+    'setAdminPassword' : IDL.Func([IDL.Text, IDL.Text, IDL.Text], [IDL.Bool], []),
+    'setAdminPrincipalByPassword' : IDL.Func([IDL.Text, IDL.Text], [IDL.Bool], []),
+    'getStudentProfileForLogin' : IDL.Func([IDL.Text, IDL.Text], [IDL.Opt(StudentAccount)], ['query']),
     'updateStudent' : IDL.Func([IDL.Nat, IDL.Text, IDL.Text, IDL.Bool], [], []),
     'updateVideoFreeBatches' : IDL.Func([IDL.Nat, IDL.Vec(IDL.Text)], [], []),
   });

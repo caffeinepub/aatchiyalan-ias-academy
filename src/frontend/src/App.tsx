@@ -138,7 +138,7 @@ function Navigation({
   isAdmin: boolean;
   onLoginClick: () => void;
   onDashboardClick: () => void;
-  onAdminClick: () => void;
+  onAdminClick?: () => void;
   onLogout: () => void;
 }) {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -328,7 +328,7 @@ function Navigation({
                       type="button"
                       onClick={() => {
                         setMobileOpen(false);
-                        onAdminClick();
+                        onAdminClick?.();
                       }}
                       className="w-full bg-gold hover:bg-gold-dark text-white font-semibold"
                     >
@@ -378,9 +378,8 @@ function Navigation({
 // ── HERO ──────────────────────────────────────────────────────────────────────
 interface HeroSectionProps {
   onLoginClick?: () => void;
-  onAdminClick?: () => void;
 }
-function HeroSection({ onLoginClick, onAdminClick }: HeroSectionProps) {
+function HeroSection({ onLoginClick }: HeroSectionProps) {
   const scrollToCounseling = () => {
     document
       .getElementById("counseling")
@@ -476,15 +475,6 @@ function HeroSection({ onLoginClick, onAdminClick }: HeroSectionProps) {
               >
                 <GraduationCap className="w-4 h-4 text-gold" />
                 Student Login
-              </Button>
-              <Button
-                type="button"
-                onClick={onAdminClick}
-                className="flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/30 text-white font-semibold text-sm px-6 py-2.5 h-auto rounded-full backdrop-blur-sm transition-all hover:border-gold/60"
-                data-ocid="hero.admin_login.button"
-              >
-                <Shield className="w-4 h-4 text-gold" />
-                Admin Login
               </Button>
             </div>
           </div>
@@ -1256,8 +1246,13 @@ export default function App() {
     null,
   );
   const [isAdmin, setIsAdmin] = useState(false);
+  const [showAdminLogin, setShowAdminLogin] = useState(false);
 
   useEffect(() => {
+    if (window.location.pathname === "/admin-login") {
+      setCurrentView("login");
+      setShowAdminLogin(true);
+    }
     const saved = localStorage.getItem("student_auth");
     if (saved) {
       try {
@@ -1285,6 +1280,7 @@ export default function App() {
     setIsAdmin(false);
     localStorage.removeItem("student_auth");
     localStorage.removeItem("admin_auth");
+    localStorage.removeItem("admin_identity");
     setCurrentView("home");
   };
 
@@ -1296,6 +1292,7 @@ export default function App() {
           onStudentSuccess={handleStudentSuccess}
           onAdminSuccess={handleAdminSuccess}
           onBack={() => setCurrentView("home")}
+          defaultTab={showAdminLogin ? "admin" : "student"}
         />
       </>
     );
@@ -1332,10 +1329,7 @@ export default function App() {
         onLogout={handleLogout}
       />
       <main>
-        <HeroSection
-          onLoginClick={() => setCurrentView("login")}
-          onAdminClick={() => setCurrentView("admin")}
-        />
+        <HeroSection onLoginClick={() => setCurrentView("login")} />
         <UpcomingBatches />
         <CoursesSection />
         <WhyChooseUs />

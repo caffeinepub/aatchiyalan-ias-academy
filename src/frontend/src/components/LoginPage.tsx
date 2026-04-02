@@ -2,10 +2,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Ed25519KeyIdentity } from "@dfinity/identity";
+import { useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft, GraduationCap, Shield } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import type { StudentAccount } from "../backend.d";
+import { createActorWithConfig } from "../config";
 import { useActor } from "../hooks/useActor";
 
 const LOGO =
@@ -22,14 +25,17 @@ interface LoginPageProps {
   onStudentSuccess: (student: StudentAccount) => void;
   onAdminSuccess: () => void;
   onBack: () => void;
+  defaultTab?: "student" | "admin";
 }
 
 export default function LoginPage({
   onStudentSuccess,
   onAdminSuccess,
   onBack,
+  defaultTab = "student",
 }: LoginPageProps) {
   const { actor: actorMaybe } = useActor();
+  const queryClient = useQueryClient();
   const actor = actorMaybe!;
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -48,7 +54,7 @@ export default function LoginPage({
         toast.error("Invalid username or password");
         return;
       }
-      const student = await actor.getStudentByUsername(username);
+      const student = await actor.getStudentProfileForLogin(username, password);
       if (!student) {
         toast.error("Account not found");
         return;
@@ -89,6 +95,28 @@ export default function LoginPage({
     try {
       const ok = await actor.adminPasswordLogin(adminUsername, adminPassword);
       if (ok) {
+        // Generate or load persistent Ed25519 identity for admin
+        let identity: Ed25519KeyIdentity;
+        const stored = localStorage.getItem("admin_identity");
+        if (stored) {
+          identity = Ed25519KeyIdentity.fromJSON(stored);
+        } else {
+          identity = Ed25519KeyIdentity.generate();
+          localStorage.setItem(
+            "admin_identity",
+            JSON.stringify(identity.toJSON()),
+          );
+        }
+        // Create actor with admin identity and register principal
+        const adminActor = await createActorWithConfig({
+          agentOptions: { identity },
+        });
+        await adminActor.setAdminPrincipalByPassword(
+          adminUsername,
+          adminPassword,
+        );
+        // Invalidate actor query so useActor refetches with new identity
+        queryClient.invalidateQueries({ queryKey: ["actor"] });
         toast.success("Admin login successful!");
         onAdminSuccess();
       } else {
@@ -132,7 +160,7 @@ export default function LoginPage({
             </p>
           </div>
           <div className="p-8">
-            <Tabs defaultValue="student">
+            <Tabs defaultValue={defaultTab}>
               <TabsList className="w-full mb-6">
                 <TabsTrigger
                   value="student"
