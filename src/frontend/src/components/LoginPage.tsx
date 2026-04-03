@@ -178,22 +178,24 @@ export default function LoginPage({
               <TabsContent value="student">
                 <form onSubmit={handleStudentLogin} className="space-y-4">
                   <div>
-                    <Label className="text-sm font-semibold mb-1.5 block">
+                    <Label className="text-sm font-semibold mb-1.5 block text-black">
                       Username
                     </Label>
                     <Input
                       placeholder="Enter your username"
+                      className="text-black"
                       value={username}
                       onChange={(e) => setUsername(e.target.value)}
                     />
                   </div>
                   <div>
-                    <Label className="text-sm font-semibold mb-1.5 block">
+                    <Label className="text-sm font-semibold mb-1.5 block text-black">
                       Password
                     </Label>
                     <Input
                       type="password"
                       placeholder="Enter your password"
+                      className="text-black"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                     />
@@ -210,22 +212,24 @@ export default function LoginPage({
               <TabsContent value="admin">
                 <form onSubmit={handleAdminPasswordLogin} className="space-y-4">
                   <div>
-                    <Label className="text-sm font-semibold mb-1.5 block">
+                    <Label className="text-sm font-semibold mb-1.5 block text-black">
                       Admin Username
                     </Label>
                     <Input
                       placeholder="Enter admin username"
+                      className="text-black"
                       value={adminUsername}
                       onChange={(e) => setAdminUsername(e.target.value)}
                     />
                   </div>
                   <div>
-                    <Label className="text-sm font-semibold mb-1.5 block">
+                    <Label className="text-sm font-semibold mb-1.5 block text-black">
                       Admin Password
                     </Label>
                     <Input
                       type="password"
                       placeholder="Enter admin password"
+                      className="text-black"
                       value={adminPassword}
                       onChange={(e) => setAdminPassword(e.target.value)}
                     />

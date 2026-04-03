@@ -1060,7 +1060,7 @@ function CounselingForm() {
             <Button
               type="submit"
               disabled={isPending}
-              className="w-full bg-navy hover:bg-navy-dark text-white font-bold text-base py-3 h-auto"
+              className="w-full bg-navy hover:bg-navy-dark text-red-600 font-bold text-base py-3 h-auto"
               data-ocid="counseling.submit_button"
             >
               {isPending ? "Submitting..." : "Request Free Counseling Session"}

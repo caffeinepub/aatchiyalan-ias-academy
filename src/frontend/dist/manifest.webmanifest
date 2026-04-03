@@ -5,7 +5,7 @@
   "description": "Aatchiyalan IAS Academy - Tamil Nadu Government Exam Coaching. TNPSC Group 1, Group 2/2A, Group 4, VAO, Madras High Court.",
   "start_url": "/",
   "display": "standalone",
-  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui", "browser"],
   "background_color": "#1e3a8a",
   "theme_color": "#1e3a8a",
   "orientation": "portrait-primary",
@@ -13,41 +13,41 @@
   "lang": "en",
   "dir": "ltr",
   "iarc_rating_id": "e84b072d-71b3-4d3e-86ae-31a8ce4e53b7",
+  "categories": ["education"],
   "icons": [
     {
-      "src": "/assets/generated/pwa-icon-192.dim_192x192.png",
+      "src": "/pwa-icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/assets/generated/pwa-icon-512.dim_512x512.png",
+      "src": "/pwa-icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/assets/generated/pwa-icon-512.dim_512x512.png",
+      "src": "/pwa-icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
     }
   ],
-  "categories": ["education"],
   "screenshots": [
     {
-      "src": "/assets/generated/screenshot-mobile.dim_390x844.jpg",
+      "src": "/pwa-screenshot-mobile.jpg",
       "sizes": "390x844",
       "type": "image/jpeg",
       "form_factor": "narrow",
-      "label": "Aatchiyalan IAS Academy Home"
+      "label": "Aatchiyalan IAS Academy - Mobile Home Screen"
     },
     {
-      "src": "/assets/generated/screenshot-wide.dim_1280x720.jpg",
+      "src": "/pwa-screenshot-wide.jpg",
       "sizes": "1280x720",
       "type": "image/jpeg",
       "form_factor": "wide",
-      "label": "Aatchiyalan IAS Academy Desktop"
+      "label": "Aatchiyalan IAS Academy - Desktop View"
     }
   ]
 }
