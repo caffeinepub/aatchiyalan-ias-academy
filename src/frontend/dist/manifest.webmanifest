@@ -5,32 +5,35 @@
   "description": "Aatchiyalan IAS Academy - Tamil Nadu Government Exam Coaching. TNPSC Group 1, Group 2/2A, Group 4, VAO, Madras High Court.",
   "start_url": "/",
   "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
   "background_color": "#1e3a8a",
   "theme_color": "#1e3a8a",
   "orientation": "portrait-primary",
   "scope": "/",
   "lang": "en",
+  "dir": "ltr",
+  "iarc_rating_id": "e84b072d-71b3-4d3e-86ae-31a8ce4e53b7",
   "icons": [
     {
-      "src": "/assets/generated/pwa-icon-192.dim_192x192.png",
+      "src": "/pwa-icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/assets/generated/pwa-icon-192.dim_192x192.png",
+      "src": "/pwa-icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "maskable"
     },
     {
-      "src": "/assets/generated/pwa-icon-512.dim_512x512.png",
+      "src": "/pwa-icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/assets/generated/pwa-icon-512.dim_512x512.png",
+      "src": "/pwa-icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
@@ -39,18 +42,25 @@
   "categories": ["education"],
   "screenshots": [
     {
-      "src": "/assets/app_pic-019d5215-7388-7621-ad40-7d8f9603587c.jpg",
+      "src": "/screenshot-mobile.jpg",
       "sizes": "1080x1920",
       "type": "image/jpeg",
       "form_factor": "narrow",
       "label": "Aatchiyalan IAS Academy Home"
     },
     {
-      "src": "/assets/app_pic_2-019d5215-74a0-776f-9dd5-1e5be1113581.jpg",
+      "src": "/screenshot-mobile2.jpg",
       "sizes": "1080x1920",
       "type": "image/jpeg",
       "form_factor": "narrow",
       "label": "Aatchiyalan IAS Academy Courses"
+    },
+    {
+      "src": "/screenshot-wide.jpg",
+      "sizes": "1080x1920",
+      "type": "image/jpeg",
+      "form_factor": "wide",
+      "label": "Aatchiyalan IAS Academy Desktop"
     }
   ]
 }
