@@ -183,7 +183,7 @@ export default function LoginPage({
                     </Label>
                     <Input
                       placeholder="Enter your username"
-                      className="text-black"
+                      className="text-black placeholder:text-gray-500 bg-white"
                       value={username}
                       onChange={(e) => setUsername(e.target.value)}
                     />
@@ -195,7 +195,7 @@ export default function LoginPage({
                     <Input
                       type="password"
                       placeholder="Enter your password"
-                      className="text-black"
+                      className="text-black placeholder:text-gray-500 bg-white"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                     />
@@ -217,7 +217,7 @@ export default function LoginPage({
                     </Label>
                     <Input
                       placeholder="Enter admin username"
-                      className="text-black"
+                      className="text-black placeholder:text-gray-500 bg-white"
                       value={adminUsername}
                       onChange={(e) => setAdminUsername(e.target.value)}
                     />
@@ -229,7 +229,7 @@ export default function LoginPage({
                     <Input
                       type="password"
                       placeholder="Enter admin password"
-                      className="text-black"
+                      className="text-black placeholder:text-gray-500 bg-white"
                       value={adminPassword}
                       onChange={(e) => setAdminPassword(e.target.value)}
                     />

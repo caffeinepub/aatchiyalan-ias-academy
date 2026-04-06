@@ -429,7 +429,10 @@ function HeroSection({ onLoginClick }: HeroSectionProps) {
           >
             Welcome to Aatchiyalan IAS Academy
           </h1>
-          <p className="text-white/70 text-lg md:text-xl leading-relaxed mb-10 max-w-3xl mx-auto">
+          <p
+            className="text-lg md:text-xl leading-relaxed mb-10 max-w-3xl mx-auto"
+            style={HEADING_GRADIENT}
+          >
             Your Gateway to Government Services — Expert Coaching for{" "}
             <strong className="text-white/90">
               TNPSC Group 1, Group 2/2A, Group 4, VAO
@@ -461,7 +464,10 @@ function HeroSection({ onLoginClick }: HeroSectionProps) {
           <div className="mt-6 flex flex-col items-center gap-3">
             <div className="flex items-center gap-3">
               <div className="h-px w-16 bg-white/20" />
-              <span className="text-white/50 text-xs uppercase tracking-widest font-medium">
+              <span
+                className="text-xs uppercase tracking-widest font-medium"
+                style={HEADING_GRADIENT}
+              >
                 Portal Access
               </span>
               <div className="h-px w-16 bg-white/20" />
@@ -470,8 +476,9 @@ function HeroSection({ onLoginClick }: HeroSectionProps) {
               <Button
                 type="button"
                 onClick={onLoginClick}
-                className="flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/30 text-white font-semibold text-sm px-6 py-2.5 h-auto rounded-full backdrop-blur-sm transition-all hover:border-gold/60"
+                className="flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/30 font-semibold text-sm px-6 py-2.5 h-auto rounded-full backdrop-blur-sm transition-all hover:border-gold/60"
                 data-ocid="hero.student_login.button"
+                style={HEADING_GRADIENT}
               >
                 <GraduationCap className="w-4 h-4 text-gold" />
                 Student Login
@@ -532,7 +539,7 @@ function UpcomingBatches() {
           <h2 className="text-3xl font-bold mb-2" style={HEADING_GRADIENT}>
             Upcoming Batches
           </h2>
-          <p className="text-white/70">
+          <p style={HEADING_GRADIENT}>
             Enroll now to secure your seat in the next batch
           </p>
           <div className="w-16 h-1 bg-gold mx-auto mt-4 rounded-full" />
@@ -569,7 +576,7 @@ function UpcomingBatches() {
               <div className="text-navy font-bold text-base mb-1">
                 {batch.group}
               </div>
-              <div className="flex items-center gap-1 text-xs text-muted-foreground justify-center">
+              <div className="flex items-center gap-1 text-xs text-gray-600 justify-center">
                 <CheckCircle2 className="w-3 h-3 text-gold" />
                 <span>Starts {batch.date}</span>
               </div>
@@ -653,7 +660,7 @@ function CoursesSection() {
           <h2 className="text-3xl font-bold mb-2" style={HEADING_GRADIENT}>
             Our Leading Courses
           </h2>
-          <p className="text-white/70">
+          <p style={HEADING_GRADIENT}>
             Expertly designed programs for every competitive exam
           </p>
           <div className="w-16 h-1 bg-gold mx-auto mt-4 rounded-full" />
@@ -681,7 +688,7 @@ function CoursesSection() {
               <p className="text-gold text-xs font-semibold mb-3">
                 {course.subtitle}
               </p>
-              <p className="text-muted-foreground text-sm leading-relaxed mb-4">
+              <p className="text-gray-700 text-sm leading-relaxed mb-4">
                 {course.desc}
               </p>
               <div className="flex items-center justify-between">
@@ -752,7 +759,7 @@ function WhyChooseUs() {
           <h2 className="text-3xl font-bold mb-2" style={HEADING_GRADIENT}>
             Why Aatchiyalan IAS Academy?
           </h2>
-          <p className="text-white/70">What sets us apart from the rest</p>
+          <p style={HEADING_GRADIENT}>What sets us apart from the rest</p>
           <div className="w-16 h-1 bg-gold mx-auto mt-4 rounded-full" />
         </motion.div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -772,7 +779,7 @@ function WhyChooseUs() {
                 <h3 className="text-navy font-bold text-base mb-1">
                   {feat.title}
                 </h3>
-                <p className="text-muted-foreground text-sm leading-relaxed">
+                <p className="text-gray-700 text-sm leading-relaxed">
                   {feat.desc}
                 </p>
               </div>
@@ -812,7 +819,7 @@ function SuccessStories() {
           <h2 className="text-3xl font-bold mb-2" style={HEADING_GRADIENT}>
             Our Achievers
           </h2>
-          <p className="text-white/70">
+          <p style={HEADING_GRADIENT}>
             Proud students who cleared government exams with Aatchiyalan IAS
             Academy
           </p>
@@ -848,7 +855,7 @@ function SuccessStories() {
                   </div>
                   <div>
                     <div className="font-bold text-navy text-sm">{a.name}</div>
-                    <div className="text-muted-foreground text-xs mt-0.5">
+                    <div className="text-gray-600 text-xs mt-0.5">
                       {a.post}{" "}
                       <span className="text-gold font-semibold">
                         · {a.year}
@@ -886,7 +893,7 @@ function SuccessStories() {
                   </div>
                   <div>
                     <div className="font-bold text-navy text-sm">{a.name}</div>
-                    <div className="text-muted-foreground text-xs mt-0.5">
+                    <div className="text-gray-600 text-xs mt-0.5">
                       {a.post}{" "}
                       <span className="text-gold font-semibold">
                         · {a.year}
@@ -966,7 +973,7 @@ function CounselingForm() {
             <h2 className="text-3xl font-bold mb-2" style={HEADING_GRADIENT}>
               Request a Free Counseling Session
             </h2>
-            <p className="text-white/70">
+            <p style={HEADING_GRADIENT}>
               Let our experts guide you to choose the right course for your
               goals
             </p>
@@ -980,7 +987,7 @@ function CounselingForm() {
               <div>
                 <Label
                   htmlFor="c-name"
-                  className="text-sm font-semibold text-foreground mb-1.5 block"
+                  className="text-sm font-semibold text-navy mb-1.5 block"
                 >
                   Full Name *
                 </Label>
@@ -996,7 +1003,7 @@ function CounselingForm() {
               <div>
                 <Label
                   htmlFor="c-email"
-                  className="text-sm font-semibold text-foreground mb-1.5 block"
+                  className="text-sm font-semibold text-navy mb-1.5 block"
                 >
                   Email Address *
                 </Label>
@@ -1013,7 +1020,7 @@ function CounselingForm() {
               <div>
                 <Label
                   htmlFor="c-phone"
-                  className="text-sm font-semibold text-foreground mb-1.5 block"
+                  className="text-sm font-semibold text-navy mb-1.5 block"
                 >
                   Mobile Number *
                 </Label>
@@ -1030,7 +1037,7 @@ function CounselingForm() {
               <div>
                 <Label
                   htmlFor="c-course"
-                  className="text-sm font-semibold text-foreground mb-1.5 block"
+                  className="text-sm font-semibold text-navy mb-1.5 block"
                 >
                   Course Interested In *
                 </Label>
@@ -1060,12 +1067,12 @@ function CounselingForm() {
             <Button
               type="submit"
               disabled={isPending}
-              className="w-full bg-navy hover:bg-navy-dark text-red-600 font-bold text-base py-3 h-auto"
+              className="w-full bg-navy hover:bg-navy-dark !text-red-500 font-bold text-base py-3 h-auto"
               data-ocid="counseling.submit_button"
             >
               {isPending ? "Submitting..." : "Request Free Counseling Session"}
             </Button>
-            <p className="text-center text-xs text-muted-foreground mt-3">
+            <p className="text-center text-xs text-gray-600 mt-3">
               After submitting, WhatsApp will open with your details pre-filled
               to notify us instantly.
             </p>
