@@ -445,7 +445,7 @@ function HeroSection({ onLoginClick }: HeroSectionProps) {
               type="button"
               size="lg"
               onClick={scrollToCounseling}
-              className="bg-gold hover:bg-gold-dark text-white font-bold text-base px-8 py-3 h-auto shadow-lg hover:shadow-xl transition-all"
+              className="bg-gold hover:bg-gold-dark text-gold font-bold text-base px-8 py-3 h-auto shadow-lg hover:shadow-xl transition-all"
               data-ocid="hero.primary_button"
             >
               Enroll Now <ChevronRight className="w-5 h-5 ml-1" />
@@ -455,7 +455,7 @@ function HeroSection({ onLoginClick }: HeroSectionProps) {
               size="lg"
               variant="outline"
               onClick={scrollToCounseling}
-              className="border-white text-white hover:bg-white hover:text-navy font-bold text-base px-8 py-3 h-auto transition-all"
+              className="border-white text-gold hover:bg-white hover:text-navy font-bold text-base px-8 py-3 h-auto transition-all"
               data-ocid="hero.secondary_button"
             >
               Free Counseling
