@@ -60,4 +60,21 @@
   html {
     scroll-behavior: smooth;
   }
+
+  /* Force black text in login/form inputs on all devices including mobile */
+  input[data-slot="input"] {
+    color: #000000 !important;
+    -webkit-text-fill-color: #000000 !important;
+  }
+
+  /* Override webkit autofill yellow background and white text on mobile */
+  input[data-slot="input"]:-webkit-autofill,
+  input[data-slot="input"]:-webkit-autofill:hover,
+  input[data-slot="input"]:-webkit-autofill:focus,
+  input[data-slot="input"]:-webkit-autofill:active {
+    -webkit-text-fill-color: #000000 !important;
+    color: #000000 !important;
+    box-shadow: 0 0 0 1000px #ffffff inset !important;
+    background-color: #ffffff !important;
+  }
 }
