@@ -54,7 +54,13 @@ export default function LoginPage({
         toast.error("Invalid username or password");
         return;
       }
-      const student = await actor.getStudentProfileForLogin(username, password);
+      const studentResult = await actor.getStudentProfileForLogin(
+        username,
+        password,
+      );
+      const student = Array.isArray(studentResult)
+        ? studentResult[0]
+        : studentResult;
       if (!student) {
         toast.error("Account not found");
         return;
